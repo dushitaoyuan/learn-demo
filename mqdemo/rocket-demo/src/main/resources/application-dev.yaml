@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    hikari:
+      connection-test-query: SELECT 1 FROM DUAL
+      maximum-pool-size: 20
+      max-lifetime: 1800000
+      minimum-idle:5
+    dynamic:
+      strict: true
+      datasource:
+        money_a:
+          url: jdbc:mysql://localhost:3306/money_db
+          username: root
+          password: root
+          driver-class-name: com.mysql.jdbc.Driver
+        money_b:
+          url: jdbc:mysql://localhost:3306/money_db
+          username: root
+          password: root
+          driver-class-name: com.mysql.jdbc.Driver
+
+
+
