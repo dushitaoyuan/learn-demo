@@ -12,7 +12,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @desc: 启动类
  */
 @SpringBootApplication
-@MapperScan(basePackages = "com.ncs.analysis.app.dao")
+@MapperScan(basePackages = "com.taoyuanx.demo.business.dao")
 public class DemoBootApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

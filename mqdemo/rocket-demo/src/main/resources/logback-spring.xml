@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="10 seconds">
     <property name="LOG_HOME" value="../logs"/>
-    <property name="LOG_PREFIX" value="analysis-app"/>
+    <property name="LOG_PREFIX" value="mqdemo"/>
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
     <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
@@ -110,6 +110,6 @@
         <appender-ref ref="WARN_FILE"/>
         <appender-ref ref="ERROR_FILE"/>
     </root>
-    <logger name="com.ncs" level="DEBUG"/>
+    <logger name="com.taoyuanx" level="DEBUG"/>
 
 </configuration>

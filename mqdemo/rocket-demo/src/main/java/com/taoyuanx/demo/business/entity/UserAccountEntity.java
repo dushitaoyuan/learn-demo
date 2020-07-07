@@ -13,6 +13,4 @@ import lombok.Data;
 public class UserAccountEntity extends BaseEntity {
     private String username;
     private Double money;
-    @TableField("transfer_password")
-    private String transferPassword;
 }

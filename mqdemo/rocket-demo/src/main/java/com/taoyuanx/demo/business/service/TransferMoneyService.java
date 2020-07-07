@@ -1,6 +1,6 @@
 package com.taoyuanx.demo.business.service;
 
-import com.taoyuanx.demo.business.entity.UserAccountEntity;
+import com.taoyuanx.demo.business.dto.TransferDTO;
 
 /**
  * @author dushitaoyuan
@@ -8,9 +8,6 @@ import com.taoyuanx.demo.business.entity.UserAccountEntity;
  * @date 2020/7/6
  */
 public interface TransferMoneyService {
-    void updateMoneyForA(UserAccountEntity userAccountEntity, Double money);
 
-    void updateMoneyForB(UserAccountEntity userAccountEntity, Double money);
-
-    void transferMoney(UserAccountEntity from, UserAccountEntity to, Double money);
+    void transferMoney(TransferDTO transferDTO) throws Exception;
 }

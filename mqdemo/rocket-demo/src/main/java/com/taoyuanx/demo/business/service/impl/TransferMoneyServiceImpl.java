@@ -1,9 +1,13 @@
 package com.taoyuanx.demo.business.service.impl;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
-import com.taoyuanx.demo.business.dao.UserAccountDao;
-import com.taoyuanx.demo.business.entity.UserAccountEntity;
+import com.alibaba.fastjson.JSON;
+import com.taoyuanx.demo.business.dto.TransferDTO;
 import com.taoyuanx.demo.business.service.TransferMoneyService;
+import com.taoyuanx.demo.config.DemoConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.client.producer.MQProducer;
+import org.apache.rocketmq.common.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,42 +16,26 @@ import org.springframework.stereotype.Service;
  * @date 2020/7/6
  */
 @Service
+@Slf4j
 public class TransferMoneyServiceImpl implements TransferMoneyService {
 
     @Autowired
-    UserAccountDao userAccountDao;
+    MQProducer moneyTransferMqProducer;
+
 
     @Override
-    @DS("money_a")
-    public void updateMoneyForA(UserAccountEntity userAccountEntity, Double money) {
-        int row = 0;
-        if (money > 0) {
-            row = userAccountDao.addMoney(userAccountEntity.getId(), money);
-        } else if (money < 0) {
-            row = userAccountDao.subMoney(userAccountEntity.getId(), money);
+    public void transferMoney(TransferDTO transferDTO) throws Exception {
+        Message transferMoneyMsg = null;
+        log.info("..................{} 转账开始.............", transferDTO.getTransferType());
+        if (transferDTO.getTransferType().equals(DemoConfig.TRANSFER_TYPE_A_B)) {
+            transferMoneyMsg = new Message(DemoConfig.MONEY_TRANSFER_TOPIC_B, JSON.toJSONBytes(transferDTO));
+        } else if (transferDTO.getTransferType().equals(DemoConfig.TRANSFER_TYPE_B_A)) {
+            transferMoneyMsg = new Message(DemoConfig.MONEY_TRANSFER_TOPIC_A, JSON.toJSONBytes(transferDTO));
         }
-        if (row == 0) {
-            throw new RuntimeException("转账失败,请检查账户余额");
-        }
+        transferMoneyMsg.setKeys(transferDTO.getSerialNo());
+        transferMoneyMsg.setTags(transferDTO.getTransferType());
+        moneyTransferMqProducer.sendMessageInTransaction(transferMoneyMsg, null);
 
-    }
-
-    @Override
-    @DS("money_b")
-    public void updateMoneyForB(UserAccountEntity userAccountEntity, Double money) {
-        int row = 0;
-        if (money > 0) {
-            row = userAccountDao.addMoney(userAccountEntity.getId(), money);
-        } else if (money < 0) {
-            row = userAccountDao.subMoney(userAccountEntity.getId(), money);
-        }
-        if (row == 0) {
-            throw new RuntimeException("转账失败,请检查账户余额");
-        }
-    }
-
-    @Override
-    public void transferMoney(UserAccountEntity from, UserAccountEntity to, Double money) {
 
     }
 }
