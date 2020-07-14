@@ -1,9 +1,9 @@
 package com.taoyuanx.demo;
 
 import com.taoyuanx.demo.api.DemoService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020/7/13
  */
 @RestController
-
+@Slf4j
 public class DemoController {
     @DubboReference
     DemoService demoService;
 
     @GetMapping("hello")
     public String hello(String demo) {
+        log.debug("log demo");
         return demoService.hello(demo);
     }
 }
