@@ -19,7 +19,9 @@
 
     <modules>
         <module>elasticsearch-client-demo</module>
-       <!--  <module>elasticsearch-sprigdata-demo</module>-->
+         <module>elasticsearch-springdata-client-demo</module>
+        <module>elasticsearch-logback-logstash-demo</module>
+        <module>elasticsearch-logback-filebeat-demo</module>
     </modules>
 
     <dependencyManagement>

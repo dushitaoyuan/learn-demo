@@ -2,9 +2,11 @@ package com.taoyuanx;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.taoyuanx.demo.DemoBootApplication;
 import com.taoyuanx.demo.es.dto.ContractDTO;
 import com.taoyuanx.demo.es.dto.EsDTO;
+import com.taoyuanx.demo.service.ContractRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -18,14 +20,17 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Test;
@@ -35,10 +40,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -48,6 +50,8 @@ import java.util.stream.Collectors;
 public class EsTest {
     @Autowired
     RestHighLevelClient restHighLevelClient;
+    @Autowired
+    ContractRepository contractRepository;
     String indexName = "contract";
     String mapping = " \"dynamic\": false,\n" +
             "            \"properties\" : {\n" +
@@ -84,6 +88,15 @@ public class EsTest {
             "                            }\n" +
             "                        }";
 
+    @Test
+    public void testData() throws Exception {
+        Iterable<ContractDTO> all = contractRepository.findAll();
+        Iterator<ContractDTO> iterator = all.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(JSON.toJSONString(iterator.next()));
+        }
+
+    }
 
     @Test
     public void testRestHighLevelClient() throws Exception {

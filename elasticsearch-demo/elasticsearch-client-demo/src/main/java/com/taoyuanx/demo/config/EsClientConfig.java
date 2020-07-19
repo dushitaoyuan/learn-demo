@@ -4,6 +4,7 @@ import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,8 +15,9 @@ import java.util.stream.Collectors;
  * @desc es client
  * @date 2020/7/16
  */
+@Configuration
 public class EsClientConfig {
-    @Bean(destroyMethod ="close" )
+    @Bean(destroyMethod = "close")
     public RestHighLevelClient esClient(EsProperties esProperties) {
         List<HttpHost> httpHostList = Arrays.stream(esProperties.getServers().split(",")).map(server -> {
             String[] split = server.split(":");
@@ -25,4 +27,6 @@ public class EsClientConfig {
                 RestClient.builder(httpHostList.toArray(new HttpHost[httpHostList.size()])));
         return client;
     }
+
+
 }

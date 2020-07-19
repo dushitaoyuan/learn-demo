@@ -61,7 +61,7 @@ Ingest Node 可以看作是数据前置处理转换的节点，支持 pipeline�
 5.3开始使用Cross Cluster Search）TribeNode 连接到不同的Elasticsearch集群，并且支持将这些集群当成一个单独的集群处理  
 - 节点类型及资源使用情况
     <img src="img/node.png"/>
- 
+
 - 分片（Primary Shard & Replica Shard）
 将数据切分放在每个分片中，分片又被放到集群中的节点上。
 每个分片都是独立的lucene实例    
@@ -75,7 +75,7 @@ Ingest Node 可以看作是数据前置处理转换的节点，支持 pipeline�
 副本分片数提高了数据冗余量
 主分片挂掉以后能够自动由副本分片升为主分片
 备份分片还能够降低主分片的查询压力(会消耗更多的系统性能)   
- 
+
 ## 安装
 ### 组件介绍   
 kibana elastic 可视化    
@@ -97,12 +97,73 @@ elasticsearch 日志收集
 
 - 下载地址（https://www.elastic.co/cn/downloads/）
 ```shell script
+install jdk 11 
+groupadd es
+useradd es -g es -p es 
+chown -R es:es  elasticsearch-7.8.0
+
+su es
+cd  elasticsearch-7.8.0/bin
+./elasticsearch -d 
+
+hostnamectl  set-hostname node1
+vim /etc/hosts
+192.168.30.210 node1
+
+#修改 config/elasticsearch.yml
+vim /etc/
+node.name: node1
+network.host: 192.168.30.210
+discovery.seed_hosts: ["node1"]
 
 
+# 启动 kibana
+vim config/kibana.yml
+elasticsearch.hosts: ["http://node1`:9200"]
+
+./kibana 
+
+
+# logstash 
+
+tar -xvf xx.tar
+
+tcp 样例配置(logstash-tcp)
+
+input {
+  tcp {
+    mode => "server"
+    host => "node1"
+    port => 9250
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["http://node1:9200"]
+    index => "app_log-%{+YYYY.MM}"
+    #user => "elastic"
+    #password => "changeme"
+  }
+}
+
+./logstash -f ../config/logstash-tcp.conf
+
+
+# filebeat
+
+参见项目 elasticsearch-logback-filebeat-demo/filebat
+
+
+./filebeat -c filebeat.yml
 ```
 
 ## 开发使用
+
 参考地址:https://www.jianshu.com/p/1fbfde2aefa5
+
+### restapi
+
 ```http request
 # 分词
 GET _analyze?pretty=true
@@ -200,6 +261,18 @@ GET contract/_search?pretty=true
     }
 }
 
+# 模糊查询
+GET app_log-2020.07/_search?pretty=true
+{
+    "query": {
+        "match" : {
+            "message" : {
+                "query" : "删除",
+                "fuzziness": "AUTO"
+            }
+        }
+    }
+}
 
 
 
@@ -216,14 +289,225 @@ GET contract/_search?pretty=true
 
 
 ```
+### 日志搜索查询
+
+```http request
+
+#查看日志索引内容
+
+GET file_beat_demo-2020.07
+# 搜素日志并按照时间排序
+
+GET file_beat_demo-2020.07/_search?pretty=true
+{
+  "query": {
+        "match" : {
+            "message" : {
+                "query" : "测试 删除",
+                "operator" : "and",
+                "zero_terms_query": "all"
+            }
+
+        }
+    },
+    "sort": [
+    {
+      "@timestamp": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+# 模糊搜索
+GET app_log_2-2020.07/_search?pretty=true
+{
+    "query": {
+        "match" : {
+            "message" : {
+                "query" : "测试",
+                "fuzziness": "AUTO"
+            }
+        }
+    }
+}
+
+```
+
 
 
 ### java RestHighLevelClient
 
-官网值:https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high-getting-started.html
 ```java
+ @Autowired
+    RestHighLevelClient restHighLevelClient;
+    String indexName = "contract";
+    String mapping = " \"dynamic\": false,\n" +
+            "            \"properties\" : {\n" +
+            "                            \"contract_id\":{\n" +
+            "                                \"type\" : \"long\",\n" +
+            "                                \"index\":true\n" +
+            "                            },  \n" +
+            "                            \"contract_name\":{\n" +
+            "                                \"type\":\"text\",\n" +
+            "                                \"index\":true\n" +
+            "                            },  \n" +
+            "                            \"contract_code\":{\n" +
+            "                                \"type\":\"keyword\",\n" +
+            "                                \"index\":true\n" +
+            "                            },  \n" +
+            "                             \"contract_hash\":{\n" +
+            "                                \"type\":\"keyword\"\n" +
+            "                            },\n" +
+            "                             \"plat_id\":{\n" +
+            "                               \"type\" : \"long\",\n" +
+            "                               \"index\":true\n" +
+            "                            },\n" +
+            "                             \"contract_figure\":{\n" +
+            "                               \"type\" : \"keyword\",\n" +
+            "                               \"index\":true\n" +
+            "                            },\n" +
+            "                            \"serial_number\":{\n" +
+            "                               \"type\" : \"keyword\",\n" +
+            "                               \"index\":true\n" +
+            "                            },\n" +
+            "                            \"create_time\":{\n" +
+            "                                \"type\": \"date\",\n" +
+            "                                \"index\":true\n" +
+            "                            }\n" +
+            "                        }";
+
+
+    @Test
+    public void testRestHighLevelClient() throws Exception {
+        if (!existIndex(indexName)) {
+            createIndex(indexName, mapping);
+        }
+        //保存
+        ContractDTO contractDTO = new ContractDTO();
+        contractDTO.setContract_id(2L);
+        contractDTO.setContract_code("testcode");
+        contractDTO.setContract_figure("figuretest");
+        contractDTO.setContract_hash("md51111");
+        contractDTO.setContract_name("测试合同002");
+        contractDTO.setCreate_time(new Date());
+        contractDTO.setSerial_number("2123456");
+        contractDTO.setPlat_id(125L);
+        EsDTO insertDTO = new EsDTO();
+        insertDTO.setId(String.valueOf(contractDTO.getContract_id()));
+        insertDTO.setJsonData(JSON.toJSONString(contractDTO));
+        saveOrUpdate(indexName, insertDTO);
+        MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("contract_name", "测试合同");
+        SearchSourceBuilder searchSourceBuilder = searchSourceBuilder(matchQuery);
+        SortBuilders.fieldSort("create_time").order(SortOrder.DESC);
+        List<ContractDTO> search = search(indexName, searchSourceBuilder, ContractDTO.class);
+        System.out.println(JSON.toJSONString(search));
+
+    }
+
+    public boolean existIndex(String indexName) throws IOException {
+        return restHighLevelClient.indices().exists(new GetIndexRequest(indexName), RequestOptions.DEFAULT);
+    }
+
+    public void deleteIndex(String indexName) throws IOException {
+        restHighLevelClient.indices().delete(new DeleteIndexRequest(indexName), RequestOptions.DEFAULT);
+    }
+
+    public void createIndex(String indexName, String indexMapping) throws IOException {
+        if (!this.existIndex(indexName)) {
+            log.error("indexName {} 已存在", indexName);
+            return;
+        }
+        CreateIndexRequest request = new CreateIndexRequest(indexName);
+        defaultIndexSetting(request);
+        request.mapping(indexMapping, XContentType.JSON);
+        CreateIndexResponse res = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
+        if (!res.isAcknowledged()) {
+            log.error("创建索引失败");
+            throw new RuntimeException("创建索引失败");
+        }
+    }
+
+    public void saveOrUpdate(String indexName, EsDTO esDTO) throws IOException {
+        IndexRequest request = new IndexRequest(indexName);
+        request.id(esDTO.getId());
+        request.source(esDTO.getJsonData(), XContentType.JSON);
+        IndexResponse indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+        if (indexResponse.status().equals(RestStatus.OK)) {
+            log.debug("新增成功");
+        }
+
+    }
+
+    public void insertBatch(String indexName, List<EsDTO> list) {
+        BulkRequest request = new BulkRequest();
+        list.forEach(item -> request.add(new IndexRequest(indexName).id(item.getId())
+                .source(item.getJsonData(), XContentType.JSON)));
+        try {
+            restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> void deleteBatch(String indexName, Collection<T> idList) {
+        BulkRequest request = new BulkRequest();
+        idList.forEach(item -> request.add(new DeleteRequest(indexName, item.toString())));
+        try {
+            restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> List<T> search(String indexName, SearchSourceBuilder builder, Class<T> resultClass) throws IOException {
+        SearchRequest request = new SearchRequest(indexName);
+        request.source(builder);
+        SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+        SearchHit[] hits = response.getHits().getHits();
+        if (hits != null && hits.length > 0) {
+            return Arrays.stream(hits).map(hit -> {
+                return JSON.parseObject(hit.getSourceAsString(), resultClass);
+            }).collect(Collectors.toList());
+        }
+        return null;
+
+
+    }
+
+    public void defaultIndexSetting(CreateIndexRequest request) {
+        /*request.settings(Settings.builder().put("index.number_of_shards", 3)
+                .put("index.number_of_replicas", 2));*/
+    }
+
+    public static SearchSourceBuilder searchSourceBuilder(QueryBuilder queryBuilder, int from, int size, int timeout) {
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(queryBuilder);
+        sourceBuilder.from(from);
+        sourceBuilder.size(size);
+        sourceBuilder.timeout(new TimeValue(timeout, TimeUnit.SECONDS));
+        return sourceBuilder;
+    }
+
+    public static SearchSourceBuilder searchSourceBuilder(QueryBuilder queryBuilder) {
+        return searchSourceBuilder(queryBuilder, 0, 10, 60);
+    }
 
 ```
 
+### 相关文档地址
+
+
+
+官方文档导航:https://www.elastic.co/guide/index.html
+
+java client 官网地址:https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high-getting-started.html
+
+logstash 文档地址: https://www.elastic.co/guide/en/logstash/current/getting-started-with-logstash.html
+
+filebeat 文档地址:https://www.elastic.co/guide/en/beats/filebeat/current/index.html
+
+spring-data-elasticsearch 仓库地址:https://github.com/spring-projects/spring-data-elasticsearch
+
+logstash-logback :https://github.com/logstash/logstash-logback-encoder
 
 
