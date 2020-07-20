@@ -289,6 +289,55 @@ GET contract/_search?pretty=true
 
 
 ```
+### sql 语法支持
+
+```http request
+
+POST _sql/translate?format=txt
+{
+  "query":"select * from log where time between 100 and 1001",
+   "fetch_size": 10
+}
+转换:
+{
+  "size" : 1000,
+  "query" : {
+    "range" : {
+      "dtTime" : {
+        "from" : 100,
+        "to" : 1001,
+        "include_lower" : true,
+        "include_upper" : true,
+        "time_zone" : "Z",
+        "boost" : 1.0
+      }
+    }
+  },
+  "_source" : {
+    "includes" : [
+      "appName",
+      "className",
+      "content",
+      "dtTime",
+      "logLevel",
+      "method",
+      "serverName"
+    ],
+    "excludes" : [ ]
+  },
+  "sort" : [
+    {
+      "_doc" : {
+        "order" : "asc"
+      }
+    }
+  ]
+}
+
+```
+
+
+
 ### 日志搜索查询
 
 ```http request
@@ -509,5 +558,11 @@ filebeat 文档地址:https://www.elastic.co/guide/en/beats/filebeat/current/ind
 spring-data-elasticsearch 仓库地址:https://github.com/spring-projects/spring-data-elasticsearch
 
 logstash-logback :https://github.com/logstash/logstash-logback-encoder
+
+elasticsearch-sql支持(elasticsearch-sql):https://www.elastic.co/cn/what-is/elasticsearch-sql
+
+Elasticsearch-SQL:https://github.com/NLPchina/elasticsearch-sql(已宣布不维护)
+
+轻量级日志搜索:  https://gitee.com/frankchenlong/plumelog
 
 

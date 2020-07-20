@@ -1,12 +1,9 @@
 package com.taoyuanx.demo;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.UUID;
 
 /**
  * @author dushitaoyuan
@@ -17,12 +14,10 @@ import java.util.UUID;
 public class LogController {
     @GetMapping("logdemo")
     public String logTest() throws Exception {
-        MDC.put("traceId", UUID.randomUUID().toString());
         log.info("{} 删除了 {}", "管理员用户", "测试用户");
         log.warn("测试告警");
         log.debug("xxxx执行 debug");
         log.error("xxx异常", new RuntimeException("运行异常"));
-        MDC.clear();
         return "log success";
     }
 

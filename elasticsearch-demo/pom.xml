@@ -22,6 +22,8 @@
          <module>elasticsearch-springdata-client-demo</module>
         <module>elasticsearch-logback-logstash-demo</module>
         <module>elasticsearch-logback-filebeat-demo</module>
+        <module>elasticsearch-logback-plumelog-demo</module>
+        <module>elasticsearch-sql-demo</module>
     </modules>
 
     <dependencyManagement>
