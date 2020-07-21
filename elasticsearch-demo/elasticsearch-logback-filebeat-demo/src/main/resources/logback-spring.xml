@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="10 seconds">
     <springProperty name="LOG_HOME" source="logging.path" defaultValue="./logs"/>
-    <springProperty name="LOG_PREFIX" source="spring.application.name" defaultValue="elasticsearch-logback-filebeat-demo"/>
-
+    <springProperty name="APP_NAME" source="spring.application.name" defaultValue="elasticsearch-logback-filebeat-demo"/>
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
     <conversionRule conversionWord="wex"
                     converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
@@ -26,13 +25,13 @@
 
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/${LOG_PREFIX}.log</file>
+        <file>${LOG_HOME}/${APP_NAME}.log</file>
         <encoder>
-            <pattern>%X{traceId}-%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <pattern>[%X{traceId}]-%d{yyyy-MM-dd HH:mm:ss.SSS}-[%thread]-%level-%logger{50}- %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/${LOG_PREFIX}-%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}-%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>

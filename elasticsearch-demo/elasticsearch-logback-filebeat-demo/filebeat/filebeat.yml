@@ -30,7 +30,7 @@ filebeat.inputs:
 
   # Exclude lines. A list of regular expressions to match. It drops the lines that are
   # matching any regular expression from the list.
-  #exclude_lines: ['^gz']
+  #exclude_lines: ['^DBG']
 
   # Include lines. A list of regular expressions to match. It exports the lines that are
   # matching any regular expression from the list.
@@ -42,8 +42,8 @@ filebeat.inputs:
 
   # Optional additional fields. These fields can be freely picked
   # to add additional information to the crawled log files for filtering
-  fields:
-    app: file_beat_demo
+  #fields:
+  #  app: file_beat_demo
   #  level: debug
   #  review: 1
 
@@ -54,10 +54,10 @@ filebeat.inputs:
 
   # The regexp Pattern that has to be matched. The example pattern matches all lines starting with [
   multiline:
-    pattern: '^\d{4}-\d{1,2}-\d{1,2}'
+    pattern: '^\['
 
   # Defines if the pattern set under pattern should be negated or not. Default is false.
-    negate: false
+    negate: true
 
   # Match can be set to "after" or "before". It is used to define if lines should be append to a pattern
   # that was (not) matched before or after or as long as a pattern is not matched based on negate.
@@ -93,7 +93,7 @@ setup.template.settings:
 # The tags of the shipper are included in their own field with each
 # transaction published.
 #tags: ["service-X", "web-tier"]
-
+tags: ["java-log"]
 # Optional fields that you can specify to add additional information to the
 # output.
 #fields:

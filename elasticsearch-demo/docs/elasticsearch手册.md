@@ -564,5 +564,6 @@ elasticsearch-sql支持(elasticsearch-sql):https://www.elastic.co/cn/what-is/ela
 Elasticsearch-SQL:https://github.com/NLPchina/elasticsearch-sql(已宣布不维护)
 
 轻量级日志搜索:  https://gitee.com/frankchenlong/plumelog
-
-
+中文指南:https://legacy.gitbook.com/book/chenryn/elk-stack-guide-cn/details
+filebeat 配置:https://www.elastic.co/guide/en/beats/filebeat/current/index.html
+参考博客:https://www.jianshu.com/p/c801ec3a64e5
