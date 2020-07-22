@@ -5,6 +5,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.ElasticSearchDruidDataSourceFactory;
 import com.taoyuanx.demo.DemoBootApplication;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,8 +20,8 @@ import java.util.Properties;
 @SpringBootTest(classes = DemoBootApplication.class)
 @Slf4j
 public class EsTest {
-    String indexName = "plume_log_run_20200720";
-    String esJdbcUrl = "jdbc:elasticsearch://127.0.0.1:9200/" + indexName;
+    String indexName = "contract";
+    String esJdbcUrl = "jdbc:elasticsearch://192.168.30.210:9200/" + indexName;
 
     @Test
     public void testEsSql() throws Exception {

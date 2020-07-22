@@ -27,7 +27,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_HOME}/${APP_NAME}.log</file>
         <encoder>
-            <pattern>[%X{traceId}]-%d{yyyy-MM-dd HH:mm:ss.SSS}-[%thread]-%level-%logger{50}- %msg%n</pattern>
+            <pattern>[%X{traceId}]-%d{yyyy-MM-dd HH:mm:ss.SSS}-[%thread]-%level-%logger{50}-%msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
