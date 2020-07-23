@@ -23,6 +23,11 @@ jmap -heap [pid]
 jmap -histo [pid]
 7. 导出堆
 jmap -dump:format=b,file=文件名 [pid]
+8. 内存监控
+vmstat 
+9. io监控
+iostat
+
 
 ```
 
@@ -34,6 +39,7 @@ jmap:打印内存映射,制作堆Dump
 jstat:性能监控工具  
 jhat:内存分析工具  
 jconsole:简易的可视化控制台    
-jvisualvm:功能强大的控制台     
+jvisualvm:功能强大的控制台  
+JMC java图形性能分析工具       
 eclipse Memory Analyzer  
 Eclipse 提供的一个用于分析JVM 堆Dump文件的插件。借助这个插件可查看对象的内存占用状况，引用关系，分析内存泄露等
