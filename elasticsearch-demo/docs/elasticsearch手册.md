@@ -380,6 +380,49 @@ GET app_log_2-2020.07/_search?pretty=true
     }
 }
 
+# 内容+日志 +排序搜索
+
+GET app_log_20200720/_search?pretty=true
+{
+  "size" : 10,
+  "query" : {
+    "bool" : {
+      "must" : [
+        {
+          "range" : {
+            "dtTime" : {
+              "from" : 1595230221378,
+              "to" : null,
+              "include_lower" : false,
+              "include_upper" : false,
+              "boost" : 1.0
+            }
+          }
+        },
+        {
+          "wildcard" : {
+            "content.keyword" : {
+              "wildcard" : "*删除*",
+              "boost" : 1.0
+            }
+          }
+        }
+      ],
+      "adjust_pure_negative" : true,
+      "boost" : 1.0
+    }
+  },
+  "sort" : [
+    {
+      "dtTime" : {
+        "order" : "asc",
+        "missing" : "_last",
+        "unmapped_type" : "long"
+      }
+    }
+  ]
+}
+
 ```
 
 
@@ -564,6 +607,5 @@ elasticsearch-sql支持(elasticsearch-sql):https://www.elastic.co/cn/what-is/ela
 Elasticsearch-SQL:https://github.com/NLPchina/elasticsearch-sql(已宣布不维护)
 
 轻量级日志搜索:  https://gitee.com/frankchenlong/plumelog
-中文指南:https://legacy.gitbook.com/book/chenryn/elk-stack-guide-cn/details
-filebeat 配置:https://www.elastic.co/guide/en/beats/filebeat/current/index.html
-参考博客:https://www.jianshu.com/p/c801ec3a64e5
+
+
