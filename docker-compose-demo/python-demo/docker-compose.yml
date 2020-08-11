@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  flask_web:
+    build: .
+    ports:
+      - "5001:5000"
+    networks:
+      - flask_net
+    deploy:
+      replicas: 2
+  redis:
+    image: "redis:alpine"
+    volumes:
+      - /home/data:/data
+    networks:
+      - flask_net
+networks:
+  flask_net:
+     external:
+      name: flask_net
