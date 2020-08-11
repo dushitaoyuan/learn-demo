@@ -29,6 +29,8 @@ services:
       - /home/springboot/logs:/home/logs
     ports:
       - "8080:8080"
+    deploy:
+      replicas: 2
     networks:
       - java_net
     depends_on:
