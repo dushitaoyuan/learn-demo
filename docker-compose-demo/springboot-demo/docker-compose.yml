@@ -23,8 +23,11 @@ services:
       - "6379:6379"
     networks:
       - java_net
-  springboot_demo:
-    image: "myregistry.com:5000/springboot_demo_v1:prod"
+  bootdemo:
+    build:
+      context: .
+# 执行构建前 执行 export app_version=xxx app_env=xxx
+    image: "myregistry.com:5000/springboot_demo_${app_version}:${app_env}"
     volumes:
       - /home/springboot/logs:/home/logs
     ports:
@@ -34,6 +37,16 @@ services:
     depends_on:
       - mysql
       - redis
+  nginx:
+    image: "nginx:1.19.1-alpine"
+    volumes:
+      - /home/nginx/:/etc/nginx/conf.d/
+    ports:
+      - "80:80"
+    networks:
+      - java_net
+    depends_on:
+      - bootdemo
 networks:
   java_net:
     external:

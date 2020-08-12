@@ -23,7 +23,7 @@ services:
       - "6379:6379"
     networks:
       - java_net
-  springboot_demo:
+  bootdemo:
     image: "myregistry.com:5000/springboot_demo_v1:prod"
     volumes:
       - /home/springboot/logs:/home/logs
@@ -36,6 +36,16 @@ services:
     depends_on:
       - mysql
       - redis
+  nginx:
+    image: "nginx:1.19.1-alpine"
+    volumes:
+      - /home/nginx/:/etc/nginx/conf.d/
+    ports:
+      - "80:80"
+    networks:
+      - java_net
+    depends_on:
+      - bootdemo
 networks:
   java_net:
     external:
