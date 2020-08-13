@@ -39,8 +39,9 @@ done
 
 
 # docker deploy
-
+docker stack rm $app_name
 docker stack deploy $app_name -c=docker-stack.yml
+docker stack ps $app_name
 
 
 
