@@ -1,17 +1,23 @@
 pipeline {
   agent any
   stages {
-    stage('') {
+    stage('prepare') {
       steps {
-        sh '''cd $workspace
-
-echo `pwd`'''
+        git(url: 'https://github.com/dushitaoyuan/learn-demo.git', branch: 'master', credentialsId: 'demo_01', poll: true)
       }
     }
 
     stage('example') {
       steps {
-        sh 'echo `pwd`'
+        sh '''echo $workspace
+
+echo `pwd`
+
+echo $image
+
+
+ls
+'''
       }
     }
 
