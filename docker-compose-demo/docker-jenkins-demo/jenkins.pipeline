@@ -15,7 +15,7 @@ pipeline {
        //docker 集群ip
        def docker_node_ip="192.168.3.150 192.168.3.153"
        // 认证ID
-       def gitCredentialsId = 'demo'
+       def gitCredentialsId = 'demo_01'
            // 正常构建流程
            stage("Preparation"){
                // 拉取需要构建的代码
