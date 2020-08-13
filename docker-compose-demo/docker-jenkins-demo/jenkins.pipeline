@@ -20,7 +20,6 @@ pipeline {
            stage("Preparation"){
                // 拉取需要构建的代码
                git_maps = checkout scm: [$class: 'GitSCM', branches: [[name: "*/${repoBranch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${gitDir}"]], userRemoteConfigs: [[credentialsId: "${gitCredentialsId}", url: "${repoUrl}"]]]
-               env.GIT_REVISION = git_maps.GIT_COMMIT[0..8]
            }
            stage('BackEndBuild') {
                // maven构建生成二进制包
@@ -34,7 +33,7 @@ pipeline {
                sh '''
                      docker build -t ${image_name } .
                      # docker harbor 登录
-                     #docker login -u admin -p Harbor12345 $regist_repo
+                     #docker login -u admin -p Harbor12345 ${docker_regist_repo}
                      docker push  ${image_name}
                      #删除本地镜像
                      docker rmi ${image_name}
@@ -51,8 +50,8 @@ pipeline {
                     ssh root@${node_ip}/  "mkdir -p /home/deploy/shell"
                     scp files/shell/docker-volume.sh root@${node_ip}:/home/deploy/shell/
                     ssh root@$node_ip  "cd /home/deploy/shell;sh docker-volume.sh create"
-                    scp -r files/mysql root@${node_ip}:/home/mysql
-                    scp -r files/nginx root@${node_ip}:/home/nginx
+                    scp -r files/mysql/* root@${node_ip}:/home/mysql
+                    scp -r files/nginx/* root@${node_ip}:/home/nginx
                    done
                '''
              }
