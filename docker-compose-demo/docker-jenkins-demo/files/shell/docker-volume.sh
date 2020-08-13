@@ -20,6 +20,9 @@ rm -rf /home/app/
 }
 
 
+
+
+
 case $1 in
     "create" ) create_volume;;
     "clear" ) clear_volume;;
