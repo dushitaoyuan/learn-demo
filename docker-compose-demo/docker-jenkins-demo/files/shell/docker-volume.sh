@@ -7,7 +7,7 @@ mkdir -p /home/nginx/
 # mysql
 mkdir -p /home/mysql/data /home/mysql/conf/ /home/mysql/init
 # 应用程序
-mkdir -p /home/app/
+mkdir -p /home/app /home/deploy/shell
 
 }
 function clear_volume() {
@@ -16,7 +16,7 @@ rm -rf -p /home/nginx/
 # mysql
 rm -rf  /home/mysql/
 # 应用程序
-rm -rf /home/app/
+rm -rf /home/app/ /home/deploy/shell
 }
 
 
