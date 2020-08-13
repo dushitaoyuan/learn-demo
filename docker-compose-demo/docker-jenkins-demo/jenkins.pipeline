@@ -16,7 +16,6 @@ pipeline {
        def docker_node_ip="192.168.3.150 192.168.3.153"
        // 认证ID
        def gitCredentialsId = 'aa651463-c335-4488-8ff0-b82b87e11c59'
-       try {
            // 正常构建流程
            stage("Preparation"){
                // 拉取需要构建的代码
@@ -32,20 +31,20 @@ pipeline {
            stage('DockerBuild'){
              dir("${workspace}"){
                // docker生成镜像并push到远程仓库中
-               sh """
+               sh '''
                      docker build -t ${image_name } .
                      # docker harbor 登录
                      #docker login -u admin -p Harbor12345 $regist_repo
                      docker push  ${image_name}
                      #删除本地镜像
                      docker rmi ${image_name}
-               """
+               '''
              }
            }
            stage('DockerStackDeployPrepare'){
               //docker stack 部署准备
              dir("${workspace}"){
-               sh """
+               sh '''
                    dos2unix files/shell/*sh
                    for node_ip in ${docker_node_ip}
                    do
@@ -55,7 +54,7 @@ pipeline {
                     scp -r files/mysql root@${node_ip}:/home/mysql
                     scp -r files/nginx root@${node_ip}:/home/nginx
                    done
-               """
+               '''
              }
            }
            stage('DockerStackDeploy'){
@@ -65,7 +64,5 @@ pipeline {
              }
            }
 
-       } catch(err) {
-          echo "failed"
-       }
+
 }
