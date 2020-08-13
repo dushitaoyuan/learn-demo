@@ -9,7 +9,7 @@ pipeline {
 
     stage('example') {
       steps {
-        sh '''echo $workspace
+        sh '''echo $workdir
 
 echo `pwd`
 
@@ -26,7 +26,7 @@ ls
     app_name = 'name'
     app_version = 'v1'
     app_env = 'prod'
-    image = '$app_name_$app_version'
-    workspace = 'docker-compose-demo/docker-jenkins-demo'
+    image = '${app_name}_${app_version}'
+    workdir = 'docker-compose-demo/docker-jenkins-demo'
   }
 }
