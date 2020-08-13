@@ -1,20 +1,22 @@
 pipeline {
     agent any
     // 参数设置
-       def repoUrl = 'https://github.com/dushitaoyuan/learn-demo.git'
-       def repoBranch = 'master'
-       def workspace ='docker-compose-demo/docker-jenkins-demo'
+      environment {
+       repoUrl = 'https://github.com/dushitaoyuan/learn-demo.git'
+        repoBranch = 'master'
+        workspace ='docker-compose-demo/docker-jenkins-demo'
        // docker镜像信息
-       def docker_regist_repo='myregistry.com:5000'
-       def app_version='v1'
-       def app_env='prod'
-       def app_name='docker-jenkins-demo'
-       def image_tag=${app_env}
-       def image_name='${docker_regist_repo}/demo/${app_name}_${app_version}:${image_tag}'
+        docker_regist_repo='myregistry.com:5000'
+        app_version='v1'
+        app_env='prod'
+        app_name='docker-jenkins-demo'
+        image_tag=${app_env}
+        image_name='${docker_regist_repo}/demo/${app_name}_${app_version}:${image_tag}'
        //docker 集群ip
-       def docker_node_ip="192.168.3.150 192.168.3.153"
+        docker_node_ip="192.168.3.150 192.168.3.153"
        // 认证ID
-       def gitCredentialsId = 'demo_01'
+        gitCredentialsId = 'demo_01'
+  }
            // 正常构建流程
            stage("Preparation"){
                // 拉取需要构建的代码
