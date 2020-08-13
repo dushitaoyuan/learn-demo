@@ -10,7 +10,7 @@ pipeline {
         app_version='v1'
         app_env='prod'
         app_name='docker-jenkins-demo'
-        image_tag=${app_env}
+        image_tag="prod"
         image_name='${docker_regist_repo}/demo/${app_name}_${app_version}:${image_tag}'
        //docker 集群ip
         docker_node_ip="192.168.3.150 192.168.3.153"
