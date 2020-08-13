@@ -27,14 +27,16 @@ docker rmi $image_name
 
 # docker deploy prepare
 
-dos2unix files/shell/*sh
+sudo dos2unix files/shell/*sh
 for node_ip in ${docker_node_ip}
 do
-ssh root@$node_ip  "mkdir -p /home/deploy/shell"
-scp files/shell/docker-volume.sh root@$node_ip:/home/deploy/shell/
-ssh root@$node_ip  "cd /home/deploy/shell;sh docker-volume.sh create"
-scp -r files/mysql/* root@$node_ip:/home/mysql
-scp -r files/nginx/* root@$node_ip:/home/nginx
+echo `id`
+echo $node_ip
+sudo ssh root@$node_ip  "mkdir -p /home/deploy/shell"
+sudo scp files/shell/docker-volume.sh root@$node_ip:/home/deploy/shell/
+sudo ssh root@$node_ip  "cd /home/deploy/shell;sh docker-volume.sh create"
+sudo scp -r files/mysql/* root@$node_ip:/home/mysql
+sudo scp -r files/nginx/* root@$node_ip:/home/nginx
 done
 
 

@@ -27,7 +27,7 @@ services:
     volumes:
       - /home/app/:/data
     ports:
-      - "8080:8080"
+      - "9090:8080"
     deploy:
       replicas: 2
     networks:
