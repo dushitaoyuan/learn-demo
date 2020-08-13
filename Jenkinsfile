@@ -9,11 +9,11 @@ pipeline {
 
     stage('example') {
       steps {
-        sh '''echo $workdir
+        sh '''echo ${project_path}
 
 echo `pwd`
 
-echo $image
+echo ${image}
 
 
 ls
@@ -27,6 +27,6 @@ ls
     app_version = 'v1'
     app_env = 'prod'
     image = '${app_name}_${app_version}'
-    workdir = 'docker-compose-demo/docker-jenkins-demo'
+    project_path = 'docker-compose-demo/docker-jenkins-demo'
   }
 }
