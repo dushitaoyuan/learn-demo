@@ -1,10 +1,9 @@
 pipeline {
     agent any
     // 参数设置
-       def repoUrl = 'https://github.com/dushitaoyuan/learn-demo.git'
-       def repoBranch = 'master'
-       def gitDir = ''
-       def workspace = 'docker-compose-demo/docker-jenkins-demo'
+       def repoUrl = "https://github.com/dushitaoyuan/learn-demo.git"
+       def repoBranch = "master"
+       def workspace = "docker-compose-demo/docker-jenkins-demo"
        // docker镜像信息
        def docker_regist_repo="myregistry.com:5000"
        def app_version="v1"
