@@ -22,7 +22,7 @@ pipeline {
                // 拉取需要构建的代码
                git(url: '${repoUrl}', branch: '${repoBranch}', credentialsId: '${gitCredentialsId}', poll: true)
            }
-           stage('BackEndBuild') {
+           stage('project_build') {
                // maven构建生成二进制包
                dir("${workspace}"){
                  sh "mvn -U clean package -Dmaven.test.skip=true"
