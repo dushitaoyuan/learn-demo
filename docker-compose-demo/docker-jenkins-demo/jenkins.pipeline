@@ -1,16 +1,16 @@
 pipeline {
     agent any
     // 参数设置
-       def repoUrl = "https://github.com/dushitaoyuan/learn-demo.git"
-       def repoBranch = "master"
-       def workspace = "docker-compose-demo/docker-jenkins-demo"
+       def repoUrl = 'https://github.com/dushitaoyuan/learn-demo.git'
+       def repoBranch = 'master'
+       def workspace ='docker-compose-demo/docker-jenkins-demo'
        // docker镜像信息
-       def docker_regist_repo="myregistry.com:5000"
-       def app_version="v1"
-       def app_env="prod"
-       def app_name="docker-jenkins-demo"
+       def docker_regist_repo='myregistry.com:5000'
+       def app_version='v1'
+       def app_env='prod'
+       def app_name='docker-jenkins-demo'
        def image_tag=${app_env}
-       def image_name="${docker_regist_repo}/demo/${app_name}_${}app_version}:${image_tag}"
+       def image_name='${docker_regist_repo}/demo/${app_name}_${app_version}:${image_tag}'
        //docker 集群ip
        def docker_node_ip="192.168.3.150 192.168.3.153"
        // 认证ID
@@ -30,7 +30,7 @@ pipeline {
              dir("${workspace}"){
                // docker生成镜像并push到远程仓库中
                sh '''
-                     docker build -t ${image_name } .
+                     docker build -t ${image_name} .
                      # docker harbor 登录
                      #docker login -u admin -p Harbor12345 ${docker_regist_repo}
                      docker push  ${image_name}
