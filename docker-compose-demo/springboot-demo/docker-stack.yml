@@ -7,9 +7,8 @@ services:
     restart: always
     volumes:
       - "/home/mysql/data:/var/lib/mysql"
-      - "/home/mysql/conf/my.cnf:/etc/my.cnf"
+      - "/home/mysql/conf:/etc/mysql/conf.d"
       - "/home/mysql/init:/docker-entrypoint-initdb.d"
-      - "/home/mysql/logs:/logs"
     ports:
       - "3306:3306"
     networks:

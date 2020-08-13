@@ -23,14 +23,13 @@ services:
     networks:
       - java_net
   bootdemo:
-    build:
-      context: .
-# 执行构建前 执行 export app_version=xxx app_env=xxx
-    image: "myregistry.com:5000/springboot_demo_${app_version}:${app_env}"
+    image: "myregistry.com:5000/springboot_demo_v1:prod"
     volumes:
       - /home/app/:/data
     ports:
       - "8080:8080"
+    deploy:
+      replicas: 2
     networks:
       - java_net
     depends_on:

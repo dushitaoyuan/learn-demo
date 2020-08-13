@@ -1,0 +1,5 @@
+[mysqld]
+skip-host-cache
+skip-name-resolve
+default-storage-engine=INNODB
+character-set-server=utf8
