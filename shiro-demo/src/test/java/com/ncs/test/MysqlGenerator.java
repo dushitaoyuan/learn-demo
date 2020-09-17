@@ -59,8 +59,7 @@ public class MysqlGenerator {
   /*      strategy.setSuperControllerClass("com.lcy.demo.sys.controller.BaseController");
         strategy.setSuperEntityClass("com.lcy.demo.sys.entity.BaseEntity");*/
         strategy.setEntityLombokModel(true);
-       // strategy.setInclude("MANAGER_USER", "MANAGER_ROLE", "ROLE_PERMISSION", "MANAGER_USER_ROLE", "REPORT_USER", "PERMISSION");  // 如果要生成多个,这里可以传入String[]
-        strategy.setInclude("FILE_INFO");  // 如果要生成多个,这里可以传入String[]
+        strategy.setInclude("user", "role", "permission");  // 如果要生成多个,这里可以传入String[]
 
         mpg.setStrategy(strategy);
         //不生成controller

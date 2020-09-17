@@ -2,7 +2,8 @@
 SQLyog Ultimate v12.3.1 (64 bit)
 MySQL - 5.7.30 : Database - demo
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -27,11 +28,12 @@ CREATE TABLE `permission` (
   `pid` bigint(20) DEFAULT NULL COMMENT '父级id',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态:0正常',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='管理端权限表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限表';
 
 /*Data for the table `permission` */
 
-insert  into `permission`(`id`,`value`,`desc`,`pid`,`status`) values 
+insert  into `permission`(`id`,`value`,`desc`,`pid`,`status`) values 
+
 (1,'index','首页',NULL,0);
 
 /*Table structure for table `role` */
@@ -46,7 +48,8 @@ CREATE TABLE `role` (
 
 /*Data for the table `role` */
 
-insert  into `role`(`id`,`name`) values 
+insert  into `role`(`id`,`name`) values 
+
 (1,'admin');
 
 /*Table structure for table `role_permission` */
@@ -57,11 +60,12 @@ CREATE TABLE `role_permission` (
   `role_id` bigint(20) NOT NULL COMMENT '角色id',
   `permission_id` bigint(20) NOT NULL COMMENT '菜单ID',
   PRIMARY KEY (`role_id`,`permission_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='管理端角色菜单关联表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色菜单关联表';
 
 /*Data for the table `role_permission` */
 
-insert  into `role_permission`(`role_id`,`permission_id`) values 
+insert  into `role_permission`(`role_id`,`permission_id`) values 
+
 (1,1);
 
 /*Table structure for table `user` */
@@ -80,7 +84,8 @@ CREATE TABLE `user` (
 
 /*Data for the table `user` */
 
-insert  into `user`(`id`,`username`,`password`,`create_time`,`update_time`,`status`) values 
+insert  into `user`(`id`,`username`,`password`,`create_time`,`update_time`,`status`) values 
+
 (1,'dushitaoyuan','$2a$10$argAtSwR.TyA7DJZ9avDbe6gshnur6IiY324x2hH70DGlNVVmos3a',NULL,NULL,0);
 
 /*Table structure for table `user_role` */
@@ -91,11 +96,12 @@ CREATE TABLE `user_role` (
   `role_id` bigint(20) NOT NULL COMMENT '角色id',
   `user_id` varchar(128) NOT NULL COMMENT '用户id',
   PRIMARY KEY (`role_id`,`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='管理端用户角色关联表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关联表';
 
 /*Data for the table `user_role` */
 
-insert  into `user_role`(`role_id`,`user_id`) values 
+insert  into `user_role`(`role_id`,`user_id`) values 
+
 (1,'1');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
