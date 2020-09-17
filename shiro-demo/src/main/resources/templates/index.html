@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="Thymeleaf"
+
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+
+    <meta charset="UTF-8"/>
+
+    <title>index</title>
+
+</head>
+
+<body>
+
+<h3>index</h3>
+
+<p shiro:authenticated="">
+    <span shiro:principal="">账户名</span>
+    登录用户可见
+</p>
+<span shiro:hasRole="admin">管理员可见</span>
+<span shiro:hasPermission="index">有index权限可见</span>
+<span shiro:hasPermission="index2">有index2权限可见</span>
+<span shiro:hasPermission="xxxx">有xxxx权限可见</span>
+</body>
+
+</html>

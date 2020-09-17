@@ -119,7 +119,7 @@ discovery.seed_hosts: ["node1"]
 
 # 启动 kibana
 vim config/kibana.yml
-elasticsearch.hosts: ["http://node1`:9200"]
+elasticsearch.hosts: ["http://node1:9200"]
 
 ./kibana 
 
@@ -182,6 +182,48 @@ number_of_replicas	副本数
 mappings	结构化数据设置 下面的一级属性 是自定义的类型
 properties	类型的属性设置节点，下面都是属性
 epoch_millis	表示时间戳
+#创建索引模板
+PUT /_template/template_test
+{
+    "index_patterns" : ["test*"],
+    "order" : 1,
+    "settings" : {
+        "number_of_shards": 1,
+        "number_of_replicas" : 2
+    },
+    "mappings" : {
+        "date_detection": false,
+        "numeric_detection": true,
+        "properties":{
+        }
+    }
+}
+ 
+#动态模板
+PUT my_index
+{
+  "mappings": {
+    "dynamic_templates": [
+      {
+        "strings_as_boolean": {
+          "match_mapping_type":   "string",
+          "match":"is*",
+          "mapping": {
+            "type": "boolean"
+          }
+        }
+      },
+      {
+        "strings_as_keywords": {
+          "match_mapping_type":   "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      }
+    ]
+  }
+}
 
 PUT index_name?pretty=true
 {
@@ -234,6 +276,18 @@ GET _cat/indices
 GET twitter?pretty=true
 # 删除索引
 DELETE index_name
+# 索引添加字段
+POST  log_index_2020/_mapping
+{
+    "properties":{
+        "name111":{
+            "type":"keyword"
+        }
+    }
+}
+
+
+
 # 添加数据
 PUT index_name/_doc/1?pretty=true
 {

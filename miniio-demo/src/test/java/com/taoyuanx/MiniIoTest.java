@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
@@ -54,6 +55,13 @@ public class MiniIoTest {
         UploadObjectArgs.Builder builder =
                 UploadObjectArgs.builder().bucket(minioProperties.getBucketName()).object("fq.exe").filename("g://fq.exe");
         minioClient.uploadObject(builder.build());
+
+
+        FileInputStream fileInputStream = new FileInputStream("g://fq.exe");
+        PutObjectArgs putObjectArgs = PutObjectArgs.builder().bucket(minioProperties.getBucketName())
+                .object("demo/fq.exe")
+                .stream(fileInputStream, fileInputStream.available(), -1).build();
+        minioClient.putObject(putObjectArgs);
         /**
          * 下载
          */
@@ -104,7 +112,7 @@ public class MiniIoTest {
         minioClient.uploadObject(uploadEncrypt);
         ServerSideEncryption serverSideEncryption = ServerSideEncryptionCustomerKey.withManagedKeys(serverKeyId, null);
         GetObjectArgs encryptDownloadObjectArgs = GetObjectArgs.builder().bucket(minioProperties.getBucketName())
-               .object("fq_encrypt.exe")
+                .object("fq_encrypt.exe")
                 .build();
         /**
          * 自动下载解密

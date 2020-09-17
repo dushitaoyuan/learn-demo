@@ -5,3 +5,5 @@
 ## 参考资料
 -  官方文档  
 https://docs.minio.io/cn/minio-quickstart-guide.html
+
+
