@@ -49,8 +49,13 @@ public class LoginController {
 
     @RequiresRoles("admin")
     @RequiresPermissions("index")
-    @RequestMapping("/index")
+    @GetMapping("/index")
     public String index() {
         return "index";
+    }
+
+    @GetMapping("/public")
+    public String page() {
+        return "public";
     }
 }

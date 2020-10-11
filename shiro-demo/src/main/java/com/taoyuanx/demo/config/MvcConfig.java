@@ -5,9 +5,12 @@ import com.taoyuanx.demo.api.Result;
 import com.taoyuanx.demo.api.ResultBuilder;
 import com.taoyuanx.demo.api.ResultCode;
 import com.taoyuanx.demo.exception.ServiceException;
+import com.taoyuanx.demo.thymeleaf.CustomExtendDialect;
+import com.taoyuanx.demo.utils.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.MediaType;
@@ -46,7 +49,7 @@ public class MvcConfig implements WebMvcConfigurer, ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         Class<?> containingClass = returnType.getContainingClass();
-        if (AnnotationUtils.findAnnotation(containingClass, RestController.class) != null || AnnotationUtils.findAnnotation(returnType.getMethod(), ResponseBody.class) != null) {
+        if (containingClass.getClass().getName().startsWith("com.taoyuanx")&&AnnotationUtils.findAnnotation(containingClass, RestController.class) != null || AnnotationUtils.findAnnotation(returnType.getMethod(), ResponseBody.class) != null) {
             return true;
         }
         return false;
@@ -153,6 +156,14 @@ public class MvcConfig implements WebMvcConfigurer, ResponseBodyAdvice<Object> {
                 .allowCredentials(true)
                 .maxAge(3600)
                 .allowedHeaders("*");
+    }
+    @Bean
+    public SpringContextUtil springContextUtil() {
+        return new SpringContextUtil();
+    }
+    @Bean
+    public CustomExtendDialect customExtendDialect() {
+        return new CustomExtendDialect();
     }
 
 
