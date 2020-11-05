@@ -25,8 +25,8 @@ public class DictHelper {
 
         dictModelList.add(demoDictModel("身份证", "0", "1"));
         dictModelList.add(demoDictModel("户口本", "1", "1"));
-        dictModelList.add(demoDictModel("港澳通行证", "3", "1"));
-        dictModelList.add(demoDictModel("士兵证", "4", "1"));
+        dictModelList.add(demoDictModel("港澳通行证", "2", "1"));
+        dictModelList.add(demoDictModel("士兵证", "3", "1"));
 
 
     }

@@ -1,6 +1,7 @@
 package com.taoyuanx.demo.config.shiro;
 
 
+import com.taoyuanx.demo.exception.ServiceException;
 import com.taoyuanx.demo.service.LoginService;
 import com.taoyuanx.demo.vo.LoginUserVo;
 import org.apache.shiro.authc.*;
@@ -13,15 +14,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 
 
-public class ManagerShiroRealm extends AuthorizingRealm {
+public class DemoShiroRealm extends AuthorizingRealm {
 
     @Autowired
     private LoginService loginService;
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        String name = (String) principalCollection.getPrimaryPrincipal();
-        LoginUserVo user = loginService.getByUsername(name);
+        Object primaryPrincipal = principalCollection.getPrimaryPrincipal();
+        LoginUserVo user = null;
+        if (primaryPrincipal instanceof String) {
+            String name = (String) principalCollection.getPrimaryPrincipal();
+            user = loginService.getByUsername(name);
+        } else if (primaryPrincipal instanceof LoginUserVo) {
+            user = (LoginUserVo) primaryPrincipal;
+        }
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
 
         user.getRoleList().stream().filter(Objects::nonNull).forEach(role -> {
@@ -38,13 +45,16 @@ public class ManagerShiroRealm extends AuthorizingRealm {
         if (authenticationToken.getPrincipal() == null) {
             return null;
         }
-        String username = authenticationToken.getPrincipal().toString();
-        LoginUserVo user = loginService.getByUsername(username);
-        if (user == null) {
-            throw new UnknownAccountException("账号不存在！");
-        } else {
-            SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(username, user.getPassword(), null, getName());
-            return simpleAuthenticationInfo;
+        if (authenticationToken instanceof UserLoginToken) {
+            String username = authenticationToken.getPrincipal().toString();
+            LoginUserVo user = loginService.getByUsername(username);
+            if (user == null) {
+                throw new UnknownAccountException("账号不存在！");
+            } else {
+                SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(user, user.getPassword(), null, String.valueOf(user.getId()));
+                return simpleAuthenticationInfo;
+            }
         }
+        throw new ServiceException("登录逻辑异常,请检查！");
     }
 }

@@ -12,4 +12,8 @@ import java.io.Serializable;
 public class LoginForm implements Serializable {
     private String username;
     private String password;
+    /**
+     * 记住我登录
+     */
+    private boolean rememberMe;
 }

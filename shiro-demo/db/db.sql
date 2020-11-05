@@ -27,6 +27,7 @@ CREATE TABLE `permission` (
   `desc` varchar(128) DEFAULT NULL COMMENT '权限描述',
   `pid` bigint(20) DEFAULT NULL COMMENT '父级id',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态:0正常',
+
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限表';
 

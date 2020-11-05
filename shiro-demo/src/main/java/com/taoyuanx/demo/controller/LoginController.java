@@ -1,7 +1,11 @@
 package com.taoyuanx.demo.controller;
 
+import com.taoyuanx.demo.api.Result;
+import com.taoyuanx.demo.api.ResultBuilder;
+import com.taoyuanx.demo.config.shiro.UserLoginToken;
 import com.taoyuanx.demo.dto.LoginForm;
 import com.taoyuanx.demo.entity.UserEntity;
+import com.taoyuanx.demo.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -9,6 +13,8 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,42 +22,55 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @Slf4j
 public class LoginController {
+
+    private  static  final String INDEX_PAGE="index",LOGIN_PAGE="login";
     /**
      * 登录
      */
-    @RequestMapping("/login")
+    @PostMapping("/login")
     @ResponseBody
-    public String login(@RequestBody LoginForm user) {
+    public Result login(@RequestBody LoginForm user) {
         Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(user.getUsername(), user.getPassword());
         try {
-            subject.login(usernamePasswordToken);
+            UserLoginToken userLoginToken = new UserLoginToken();
+            userLoginToken.setUsername(user.getUsername());
+            userLoginToken.setPassword(user.getPassword().toCharArray());
+            userLoginToken.setRememberMe(user.isRememberMe());
+            subject.login(userLoginToken);
         } catch (AuthenticationException e) {
             log.warn("登录异常", e);
-            return "账号或密码错误！";
-        } catch (AuthorizationException e) {
-            e.printStackTrace();
-            return "没有权限";
+            throw new ServiceException("账号或密码错误！");
         }
-        return "login success";
+        return ResultBuilder.success(user.getUsername());
+    }
+
+    @GetMapping("/login")
+    public String loginPage() {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
+            return "redirect:/index";
+        }
+        if (subject.isRemembered()) {
+            PrincipalCollection principals = subject.getPrincipals();
+            subject.runAs(principals);
+            return "redirect:/index";
+        }
+        return LOGIN_PAGE;
     }
 
     /**
      * 退出
      */
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    @ResponseBody
+    @GetMapping(value = "/logout")
     public String logout() {
         SecurityUtils.getSubject().logout();
-        return "logout success";
-
+        return "redirect:/login";
     }
 
-    @RequiresRoles("admin")
-    @RequiresPermissions("index")
+    @RequiresUser
     @GetMapping("/index")
     public String index() {
-        return "index";
+        return INDEX_PAGE;
     }
 
     @GetMapping("/public")
