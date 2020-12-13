@@ -6,7 +6,6 @@
     <artifactId>shiro-demo</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>report-management-service</name>
 <properties>
     <springboot.version>2.2.9.RELEASE</springboot.version>
     <java.version>1.8</java.version>
