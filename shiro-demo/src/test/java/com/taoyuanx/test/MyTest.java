@@ -1,4 +1,4 @@
-package com.ncs.test;
+package com.taoyuanx.test;
 
 import com.taoyuanx.demo.utils.PasswordUtil;
 import lombok.extern.slf4j.Slf4j;

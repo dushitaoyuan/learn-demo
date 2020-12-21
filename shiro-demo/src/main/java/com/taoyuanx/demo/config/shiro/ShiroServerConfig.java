@@ -2,7 +2,6 @@ package com.taoyuanx.demo.config.shiro;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.taoyuanx.demo.exception.AuthException;
-import com.taoyuanx.demo.exception.ServiceException;
 import com.taoyuanx.demo.service.LoginService;
 import com.taoyuanx.demo.utils.PasswordUtil;
 import com.taoyuanx.demo.utils.PropertiesUtil;

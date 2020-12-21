@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="Thymeleaf">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>index</title>
+
+</head>
+
+<body>
+
+<h3>index</h3>
+
+
+
+<select >
+    <option th:each="dictItem,stat:${#dict.list('1')}" th:value="${dictItem.code}" th:text="${dictItem.value}">xx</option>
+</select>
+<span th:text="${#dict.value('1','0')}"></span>
+
+<span th:text="${#dict.code('1','身份证')}"></span>
+
+</body>
+
+</html>

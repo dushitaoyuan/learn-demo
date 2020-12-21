@@ -23,7 +23,8 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class LoginController {
 
-    private  static  final String INDEX_PAGE="index",LOGIN_PAGE="login";
+    private static final String INDEX_PAGE = "index", LOGIN_PAGE = "login";
+
     /**
      * 登录
      */
@@ -65,6 +66,11 @@ public class LoginController {
     public String logout() {
         SecurityUtils.getSubject().logout();
         return "redirect:/login";
+    }
+
+    @GetMapping(value = "/errorTest")
+    public String error() {
+        throw new ServiceException(101, "测试异常");
     }
 
     @RequiresUser

@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * @author dushitaoyuan
  * @date 2019/9/2622:46
- * @desc: 统计任务启动类
  */
 @MapperScan(basePackages = "com.taoyuanx.demo.mapper")
 @SpringBootApplication

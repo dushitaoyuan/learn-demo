@@ -1,4 +1,4 @@
-package com.ncs.test;
+package com.taoyuanx.test;
 
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.*;
@@ -56,8 +56,9 @@ public class MysqlGenerator {
         StrategyConfig strategy = new StrategyConfig();
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-  /*      strategy.setSuperControllerClass("com.lcy.demo.sys.controller.BaseController");
-        strategy.setSuperEntityClass("com.lcy.demo.sys.entity.BaseEntity");*/
+      strategy.setSuperControllerClass("com.lcy.demo.sys.controller.BaseController");
+        strategy.setSuperEntityClass("com.lcy.demo.sys.entity.BaseEntity");
+
         strategy.setEntityLombokModel(true);
         strategy.setInclude("user", "role", "permission");  // 如果要生成多个,这里可以传入String[]
 
