@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2019/9/2622:46
  */
 @SpringBootApplication
-public class BootApplication {
+public class CanalDemoApplication {
     public static void main(String[] args) {
-        SpringApplication.run(BootApplication.class, args);
+        SpringApplication.run(CanalDemoApplication.class, args);
     }
 }
