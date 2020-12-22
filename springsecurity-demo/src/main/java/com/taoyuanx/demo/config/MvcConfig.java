@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -72,6 +73,7 @@ public class MvcConfig implements WebMvcConfigurer, ResponseBodyAdvice<Object> {
         }
         return ResultBuilder.success(body);
     }
+
     // 统一异常处理
     @ExceptionHandler(value = Exception.class)
     public ModelAndView handle(Exception e, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
@@ -82,7 +84,7 @@ public class MvcConfig implements WebMvcConfigurer, ResponseBodyAdvice<Object> {
         if (responseStatus != null) {
             httpStatus = responseStatus.code().value();
         }
-        if (e instanceof AuthException ) {
+        if (e instanceof AuthException || e instanceof AccessDeniedException) {
             if (httpStatus != null) {
                 httpStatus = 401;
             }

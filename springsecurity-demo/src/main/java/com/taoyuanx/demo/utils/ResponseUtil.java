@@ -1,7 +1,6 @@
 package com.taoyuanx.demo.utils;
 
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,10 +22,14 @@ public class ResponseUtil {
         }
     }
 
-    public static boolean isAjaxRequest(HttpServletRequest request) {
-        return request.getHeader("X-Requested-With") != null && request.getHeader("X-Requested-With").equals("XMLHttpRequest");
+    public static boolean isAcceptJson(HttpServletRequest request) {
+        String accept = request.getHeader("Accept");
+        if (accept.contains("json")) {
+            return true;
+        }
+        boolean isAjax = request.getHeader("X-Requested-With") != null && request.getHeader("X-Requested-With").equals("XMLHttpRequest");
+        return isAjax;
     }
-
 
 
 }

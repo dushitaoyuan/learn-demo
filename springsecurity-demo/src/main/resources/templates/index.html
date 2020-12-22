@@ -2,7 +2,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="Thymeleaf"
 
-      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 
@@ -15,18 +15,38 @@
 <body>
 
 <h3>index</h3>
-
-<p shiro:authenticated="">
-    <span shiro:principal="">账户名</span>
+<p>
+    <span sec:authentication="name">账户名</span>
     登录用户可见
 </p>
-<span shiro:hasRole="admin">管理员可见</span>
-<span shiro:hasPermission="index">有index权限可见</span>
-<span shiro:hasPermission="index2">有index2权限可见</span>
-<span shiro:hasPermission="xxxx">有xxxx权限可见</span>
+<span sec:authorize="hasRole('admin')">管理员可见</span>
+<span sec:authorize="hasRole('audit')">audit可见</span>
 
+<span sec:authorize="hasAuthority('index')">index权限可见</span>
 
-
+<button onclick="logout()">退出</button>
+<script src="/js/layui/layui.all.js"></script>
 </body>
+<script type="text/javascript">
+    $ = layui.jquery;
+    function logout() {
+        $.ajax({
+            method: "GET",
+            url: "/logout",
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.success == 1) {
 
+                    window.location.href = '/login';
+                } else {
+                    layer.msg(result.msg);
+                }
+
+            },
+            error: function (xhr) {
+                layer.msg(xhr.msg);
+            }
+        })
+    }
+</script>
 </html>

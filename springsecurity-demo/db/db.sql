@@ -51,7 +51,9 @@ CREATE TABLE `role` (
 
 insert  into `role`(`id`,`name`) values 
 
-(1,'admin');
+(1,'admin'),
+(2,'audit');
+;
 
 /*Table structure for table `role_permission` */
 

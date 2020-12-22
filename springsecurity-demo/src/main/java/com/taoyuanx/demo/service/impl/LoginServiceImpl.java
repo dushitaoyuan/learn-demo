@@ -1,27 +1,19 @@
 package com.taoyuanx.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.taoyuanx.demo.entity.PermissionEntity;
 import com.taoyuanx.demo.entity.UserEntity;
-import com.taoyuanx.demo.entity.RoleEntity;
+import com.taoyuanx.demo.mapper.PermissionMapper;
 import com.taoyuanx.demo.mapper.RoleMapper;
 import com.taoyuanx.demo.mapper.UserMapper;
-import com.taoyuanx.demo.mapper.PermissionMapper;
 import com.taoyuanx.demo.service.LoginService;
 import com.taoyuanx.demo.vo.LoginUserVo;
-import com.vip.vjtools.vjkit.mapper.BeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,9 +26,9 @@ import java.util.stream.Collectors;
 @Service
 public class LoginServiceImpl implements LoginService {
     @Autowired
-    UserMapper managerUserMapper;
+    UserMapper userMapper;
     @Autowired
-    RoleMapper managerRoleMapper;
+    RoleMapper roleMapper;
     @Autowired
     PermissionMapper permissionMapper;
 
@@ -47,7 +39,7 @@ public class LoginServiceImpl implements LoginService {
          * 角色
          */
         String ROLE_PREFIX = "ROLE_";
-        List<SimpleGrantedAuthority> roleList = managerRoleMapper.listRoleByUserId(dbUser.getId()).stream().map(role -> {
+        List<SimpleGrantedAuthority> roleList = roleMapper.listRoleByUserId(dbUser.getId()).stream().map(role -> {
             return new SimpleGrantedAuthority(ROLE_PREFIX + role.getName());
         }).collect(Collectors.toList());
         /**
@@ -60,13 +52,14 @@ public class LoginServiceImpl implements LoginService {
         authorityList.addAll(permissionList);
 
         LoginUserVo loginUserVo = new LoginUserVo(username, dbUser.getPassword(), authorityList);
+        loginUserVo.setUser(dbUser);
         return loginUserVo;
     }
 
 
     @Override
     public UserEntity findByUserName(String username) {
-        UserEntity dbUser = managerUserMapper.selectOne(new LambdaQueryWrapper<UserEntity>().eq(UserEntity::getUsername, username));
+        UserEntity dbUser = userMapper.selectOne(new LambdaQueryWrapper<UserEntity>().eq(UserEntity::getUsername, username));
         return dbUser;
     }
 }

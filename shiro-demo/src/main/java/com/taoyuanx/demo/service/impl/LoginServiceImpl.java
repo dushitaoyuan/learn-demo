@@ -24,22 +24,22 @@ import java.util.List;
 @Service
 public class LoginServiceImpl implements LoginService {
     @Autowired
-    UserMapper managerUserMapper;
+    UserMapper userMapper;
     @Autowired
-    RoleMapper managerRoleMapper;
+    RoleMapper roleMapper;
     @Autowired
     PermissionMapper permissionMapper;
 
     @Override
     public LoginUserVo getByUsername(String username) {
-        UserEntity user = managerUserMapper.selectOne(new LambdaQueryWrapper<UserEntity>().eq(UserEntity::getUsername, username));
+        UserEntity user = userMapper.selectOne(new LambdaQueryWrapper<UserEntity>().eq(UserEntity::getUsername, username));
         if (null == user) {
             return null;
         }
         /**
          * 角色
          */
-        List<RoleEntity> roleList = managerRoleMapper.listRoleByUserId(user.getId());
+        List<RoleEntity> roleList = roleMapper.listRoleByUserId(user.getId());
         /**
          * 权限
          */

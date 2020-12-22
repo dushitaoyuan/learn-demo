@@ -64,11 +64,7 @@
             data: JSON.stringify(loginFormData),
             success: function (result) {
                 if (result.success == 1) {
-                    layer.msg('登录成功!', function () {
-                        setTimeout(function () {
-                            window.location.href = '/index';
-                        }, 200);
-                    })
+                    window.location.href = '/index';
                 } else {
                     layer.msg(result.msg);
                 }
