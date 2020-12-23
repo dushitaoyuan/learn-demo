@@ -1,4 +1,4 @@
-package com.taoyuanx.demo.util;
+package com.taoyuanx.demo.client.entryhandler;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.CanalEntry.Column;
 import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
@@ -24,8 +23,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry.TransactionBegin;
 import com.alibaba.otter.canal.protocol.CanalEntry.TransactionEnd;
 import com.alibaba.otter.canal.protocol.Message;
 import com.google.protobuf.InvalidProtocolBufferException;
-
-public class CanalClientPrint {
+public class CanalClientPrint  {
 
     protected final static Logger logger = LoggerFactory.getLogger(CanalClientPrint.class);
     protected static final String SEP = SystemUtils.LINE_SEPARATOR;
@@ -132,9 +130,7 @@ public class CanalClientPrint {
                 } catch (Exception e) {
                     throw new RuntimeException("parse event has an error , data:" + entry.toString(), e);
                 }
-
                 EventType eventType = rowChage.getEventType();
-
                 logger.info(row_format,
                         new Object[]{entry.getHeader().getLogfileName(),
                                 String.valueOf(entry.getHeader().getLogfileOffset()), entry.getHeader().getSchemaName(),
@@ -146,7 +142,6 @@ public class CanalClientPrint {
                     logger.info(" sql ----> " + rowChage.getSql() + SEP);
                     continue;
                 }
-
                 printXAInfo(rowChage.getPropsList());
                 for (RowData rowData : rowChage.getRowDatasList()) {
                     if (eventType == EventType.DELETE) {
@@ -259,5 +254,6 @@ public class CanalClientPrint {
         }
         return "";
     }
+
 
 }

@@ -1,5 +1,9 @@
 # canal 基本指南
 
+## canal 简介
+ canal-deployer mysql binlog 解析
+ canal-adapter 适配各个数据源
+ 
 ## mysql相关配置
 
 ### 初始化mysql slave账户
