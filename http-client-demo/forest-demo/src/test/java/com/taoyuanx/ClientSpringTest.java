@@ -2,8 +2,7 @@ package com.taoyuanx;
 
 
 import com.alibaba.fastjson.JSON;
-import com.ncs.DemoBootApplication;
-import com.ncs.client.MyClient;
+import com.taoyuanx.client.MyClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

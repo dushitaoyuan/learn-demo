@@ -1,4 +1,4 @@
-package com.ncs.client;
+package com.taoyuanx.client;
 
 import com.dtflys.forest.annotation.DataObject;
 import com.dtflys.forest.annotation.DataParam;

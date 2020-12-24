@@ -1,4 +1,4 @@
-package com.ncs.client;
+package com.taoyuanx.client;
 
 import com.dtflys.forest.config.ForestConfiguration;
 import com.dtflys.forest.ssl.SSLUtils;

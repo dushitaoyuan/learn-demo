@@ -4,7 +4,7 @@ package com.taoyuanx;
 import com.alibaba.fastjson.JSON;
 import com.dtflys.forest.config.ForestConfiguration;
 import com.dtflys.forest.ssl.SSLUtils;
-import com.ncs.client.MyClient;
+import com.taoyuanx.client.MyClient;
 import org.junit.Before;
 import org.junit.Test;
 

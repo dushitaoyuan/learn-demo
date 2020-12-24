@@ -1,4 +1,4 @@
-package com.ncs.controller;
+package com.taoyuanx.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

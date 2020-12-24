@@ -81,6 +81,6 @@
         <appender-ref ref="DEBUG_FILE"/>
         <appender-ref ref="ERROR_FILE"/>
     </root>
-    <logger name="com.ncs" level="DEBUG"/>
+    <logger name="com.taoyuanx" level="DEBUG"/>
 
 </configuration>
