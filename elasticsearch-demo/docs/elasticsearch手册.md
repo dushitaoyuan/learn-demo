@@ -165,6 +165,29 @@ output {
 ### restapi
 
 ```http request
+
+# 查看版本
+GET /
+
+
+{
+  "name" : "node-1",
+  "cluster_name" : "es-cluster",
+  "cluster_uuid" : "DDzk0EHhSJKaACy2FJAO0g",
+  "version" : {
+    "number" : "6.6.2",
+    "build_flavor" : "default",
+    "build_type" : "tar",
+    "build_hash" : "3bd3e59",
+    "build_date" : "2019-03-06T15:16:26.864148Z",
+    "build_snapshot" : false,
+    "lucene_version" : "7.6.0",
+    "minimum_wire_compatibility_version" : "5.6.0",
+    "minimum_index_compatibility_version" : "5.0.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+
 # 分词
 GET _analyze?pretty=true
 {
