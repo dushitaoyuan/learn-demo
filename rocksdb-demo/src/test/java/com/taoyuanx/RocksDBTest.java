@@ -111,7 +111,6 @@ public class RocksDBTest {
             columnFamilyHandleList.stream().forEach(cfh -> {
                 System.out.println("cf:\t" + cfh.getID());
             });
-
             //删除列族
            // rocksDB.dropColumnFamily(mycf);
         } catch (Exception e) {
@@ -122,5 +121,7 @@ public class RocksDBTest {
             }
         }
     }
+
+
 
 }
