@@ -18,7 +18,6 @@ public class Main {
         DemoService service = new DemoServiceImpl();
         DriftService driftService = new DriftService(service);
 
-
         DriftNettyServerConfig serverConfig = new DriftNettyServerConfig();
         serverConfig.setPort(9090);
         serverConfig.setWorkerThreadCount(10);
