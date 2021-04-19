@@ -1,86 +1,222 @@
 package com.taoyuanx.thrift.core.server;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import io.airlift.drift.codec.ThriftCodecManager;
-import io.airlift.drift.server.DriftServer;
-import io.airlift.drift.server.DriftService;
-import io.airlift.drift.server.stats.NullMethodInvocationStatsFactory;
-import io.airlift.drift.transport.netty.server.DriftNettyServerConfig;
-import io.airlift.drift.transport.netty.server.DriftNettyServerTransportFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.CollectionUtils;
+import com.google.common.base.Objects;
+import com.taoyuanx.thrift.core.ThriftConstant;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author dushitaoyuan
- * @date 2021/4/1821:17
- * @desc: 处理bean注解
+ * @date 2021/4/1822:22
  */
-public class ThriftServerConfig implements ApplicationContextAware, InitializingBean, DisposableBean {
-    private ApplicationContext applicationContext;
+public class ThriftServerConfig {
+    private int port = ThriftConstant.PORT;
+    private int ioThreadNum;
+    private int workThreadNum;
+    private int timeOut;
+    private int acceptBacklog;
+    private int maxFrameSize;
+    private int requestTimeout;
+    private int sslContextRefreshTime;
+    private boolean allowPlaintext = true;
+    private boolean sslEnabled;
+    private List<String> ciphers;
+    private String trustCertificate;
+    private String key;
+    private String keyPassword;
+    private long sessionCacheSize;
+    private int sessionTimeout;
+    private boolean assumeClientsSupportOutOfOrderResponses = true;
 
-    private List<DriftServer> driftServerList;
+    private String serviceInterface;
+
+    private Class serviceInterfaceClass;
+
+    private Object serviceImpl;
+
+    private double version;
 
     @Override
-    public void destroy() throws Exception {
-        if (!CollectionUtils.isEmpty(driftServerList)) {
-            driftServerList.stream().forEach(DriftServer::shutdown);
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ThriftServerConfig that = (ThriftServerConfig) o;
+        return port == that.port && Double.compare(that.version, version) == 0 && Objects.equal(serviceInterface, that.serviceInterface);
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(ThriftServiceImpl.class);
-        Map<Integer, List<ThriftServer>> portServerMap = beansWithAnnotation.values().stream().map((serviceBean) -> {
-            ThriftServiceImpl annotation = AnnotationUtils.findAnnotation(serviceBean.getClass(), ThriftServiceImpl.class);
-            ThriftServer thriftServer = new ThriftServer();
-            thriftServer.setPort(annotation.port());
-            thriftServer.setServiceImpl(serviceBean);
-            thriftServer.setRequestTimeout(annotation.timeOut());
-            return thriftServer;
-        }).collect(Collectors.groupingBy(ThriftServer::getPort));
-        driftServerList = portServerMap.entrySet().stream().map(kv -> {
-            return mapToDriftServer(kv.getValue(), kv.getKey());
-        }).collect(Collectors.toList());
-        driftServerList.stream().forEach(DriftServer::start);
+    public int hashCode() {
+        return Objects.hashCode(port, serviceInterface, version);
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    public double getVersion() {
+        return version;
     }
 
-    private DriftServer mapToDriftServer(List<ThriftServer> thriftServerList, int port) {
-        List<DriftService> driftServiceList = Lists.newArrayListWithCapacity(thriftServerList.size());
-        int maxWorkThreadNum = 0, maxIoThreadNum = 0;
-        for (ThriftServer thriftServer : thriftServerList) {
-            driftServiceList.add(new DriftService(thriftServer.getServiceImpl()));
-            maxIoThreadNum = Math.max(maxWorkThreadNum, thriftServer.getIoThreadNum());
-            maxWorkThreadNum = Math.max(maxWorkThreadNum, thriftServer.getWorkThreadNum());
+    public void setVersion(double version) {
+        this.version = version;
+    }
 
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public int getIoThreadNum() {
+        return ioThreadNum;
+    }
+
+    public void setIoThreadNum(int ioThreadNum) {
+        this.ioThreadNum = ioThreadNum;
+    }
+
+    public int getWorkThreadNum() {
+        return workThreadNum;
+    }
+
+    public void setWorkThreadNum(int workThreadNum) {
+        this.workThreadNum = workThreadNum;
+    }
+
+    public int getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
+    }
+
+    public int getAcceptBacklog() {
+        return acceptBacklog;
+    }
+
+    public void setAcceptBacklog(int acceptBacklog) {
+        this.acceptBacklog = acceptBacklog;
+    }
+
+    public int getMaxFrameSize() {
+        return maxFrameSize;
+    }
+
+    public void setMaxFrameSize(int maxFrameSize) {
+        this.maxFrameSize = maxFrameSize;
+    }
+
+    public int getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(int requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public int getSslContextRefreshTime() {
+        return sslContextRefreshTime;
+    }
+
+    public void setSslContextRefreshTime(int sslContextRefreshTime) {
+        this.sslContextRefreshTime = sslContextRefreshTime;
+    }
+
+    public boolean isAllowPlaintext() {
+        return allowPlaintext;
+    }
+
+    public void setAllowPlaintext(boolean allowPlaintext) {
+        this.allowPlaintext = allowPlaintext;
+    }
+
+    public boolean isSslEnabled() {
+        return sslEnabled;
+    }
+
+    public void setSslEnabled(boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
+    }
+
+    public List<String> getCiphers() {
+        return ciphers;
+    }
+
+    public void setCiphers(List<String> ciphers) {
+        this.ciphers = ciphers;
+    }
+
+    public String getTrustCertificate() {
+        return trustCertificate;
+    }
+
+    public void setTrustCertificate(String trustCertificate) {
+        this.trustCertificate = trustCertificate;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getKeyPassword() {
+        return keyPassword;
+    }
+
+    public void setKeyPassword(String keyPassword) {
+        this.keyPassword = keyPassword;
+    }
+
+    public long getSessionCacheSize() {
+        return sessionCacheSize;
+    }
+
+    public void setSessionCacheSize(long sessionCacheSize) {
+        this.sessionCacheSize = sessionCacheSize;
+    }
+
+    public int getSessionTimeout() {
+        return sessionTimeout;
+    }
+
+    public void setSessionTimeout(int sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
+    }
+
+    public boolean isAssumeClientsSupportOutOfOrderResponses() {
+        return assumeClientsSupportOutOfOrderResponses;
+    }
+
+    public void setAssumeClientsSupportOutOfOrderResponses(boolean assumeClientsSupportOutOfOrderResponses) {
+        this.assumeClientsSupportOutOfOrderResponses = assumeClientsSupportOutOfOrderResponses;
+    }
+
+    public String getServiceInterface() {
+        return serviceInterface;
+    }
+
+    public void setServiceInterface(String serviceInterface) {
+        this.serviceInterface = serviceInterface;
+    }
+
+    public Class getServiceInterfaceClass() {
+        return serviceInterfaceClass;
+    }
+
+    public void setServiceInterfaceClass(Class serviceInterfaceClass) {
+        this.serviceInterfaceClass = serviceInterfaceClass;
+        if (serviceInterface == null) {
+            this.serviceInterface = serviceInterfaceClass.getName();
         }
-        DriftNettyServerConfig serverConfig = new DriftNettyServerConfig();
-        serverConfig.setPort(port);
-        if (maxWorkThreadNum > 0) {
-            serverConfig.setWorkerThreadCount(maxWorkThreadNum);
-        }
-        if (maxIoThreadNum > 0) {
-            serverConfig.setIoThreadCount(maxIoThreadNum);
-        }
-        return new DriftServer(
-                new DriftNettyServerTransportFactory(serverConfig),
-                new ThriftCodecManager(),
-                new NullMethodInvocationStatsFactory(),
-                ImmutableSet.copyOf(driftServiceList),
-                ImmutableSet.of());
+    }
+
+    public Object getServiceImpl() {
+        return serviceImpl;
+    }
+
+    public void setServiceImpl(Object serviceImpl) {
+        this.serviceImpl = serviceImpl;
     }
 }

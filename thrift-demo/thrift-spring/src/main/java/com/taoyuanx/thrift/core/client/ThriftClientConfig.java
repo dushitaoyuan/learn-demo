@@ -1,55 +1,179 @@
 package com.taoyuanx.thrift.core.client;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.ApplicationContext;
+import com.google.common.collect.ImmutableList;
+import com.google.common.net.HostAndPort;
+import com.taoyuanx.thrift.core.ThriftConstant;
+import io.airlift.drift.transport.netty.codec.Protocol;
+import io.airlift.drift.transport.netty.codec.Transport;
 
-import java.lang.reflect.Field;
+import java.util.List;
+
+import static io.airlift.drift.transport.netty.codec.Protocol.BINARY;
+import static io.airlift.drift.transport.netty.codec.Transport.FRAMED;
 
 /**
  * @author dushitaoyuan
- * @date 2021/4/1821:17
- * @desc: 处理bean注解
+ * @date 2021/4/1822:22
  */
-public class ThriftClientConfig implements BeanPostProcessor {
-    @Autowired
-    private ApplicationContext applicationContext;
+public class ThriftClientConfig {
+    private int port = ThriftConstant.PORT;
 
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
+    private String[] serverList;
+    private Transport transport = FRAMED;
+    private Protocol protocol = BINARY;
+    private Integer maxFrameSize;
+
+    private Integer connectTimeout;
+    private Integer requestTimeout;
+
+    private HostAndPort socksProxy;
+
+    private boolean sslEnabled;
+    private List<String> ciphers = ImmutableList.of();
+
+    private String trustCertificate;
+    private String key;
+    private String keyPassword;
+    private long sessionCacheSize;
+    private Integer sessionTimeout;
+
+    private String serviceInterfaceName;
+
+    public String[] getServerList() {
+        return serverList;
     }
 
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        Class<?> beanClass = bean.getClass();
-        Field[] fields = beanClass.getDeclaredFields();
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(ThriftClient.class)) {
-                if (!field.getType().isInterface()) {
-                    throw new BeanCreationException("@ThriftClient field must be declared as an interface:" + field.getName()
-                            + " @Class " + beanClass.getName());
-                }
-                /*applicationContext.getBeansOfType(field.getType());
-                field.setAccessible(true);
-                if (candidates.size() == 1) {
-                    field.set(bean, candidates.values().iterator().next());
-                } else if (candidates.size() == 2) {
-                    ThriftClient thriftClient = field.getAnnotation(ThriftClient.class);
-                    Object proxy = null;
-                    field.set(bean, proxy);
-                } else {
-                    throw new IllegalArgumentException("Find more than 2 beans for type: " + type);
-                }*/
-
-            }
-        }
-        return bean;
+    public void setServerList(String[] serverList) {
+        this.serverList = serverList;
     }
 
+    private Class serviceInterfaceClass;
 
+    public String getServiceInterfaceName() {
+        return serviceInterfaceName;
+    }
 
+    public void setServiceInterfaceName(String serviceInterfaceName) {
+        this.serviceInterfaceName = serviceInterfaceName;
+    }
 
+    public Class getServiceInterfaceClass() {
+        return serviceInterfaceClass;
+    }
+
+    public void setServiceInterfaceClass(Class serviceInterfaceClass) {
+        this.serviceInterfaceClass = serviceInterfaceClass;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public Transport getTransport() {
+        return transport;
+    }
+
+    public void setTransport(Transport transport) {
+        this.transport = transport;
+    }
+
+    public Protocol getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(Protocol protocol) {
+        this.protocol = protocol;
+    }
+
+    public Integer getMaxFrameSize() {
+        return maxFrameSize;
+    }
+
+    public void setMaxFrameSize(Integer maxFrameSize) {
+        this.maxFrameSize = maxFrameSize;
+    }
+
+    public Integer getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(Integer connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public Integer getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(Integer requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public HostAndPort getSocksProxy() {
+        return socksProxy;
+    }
+
+    public void setSocksProxy(HostAndPort socksProxy) {
+        this.socksProxy = socksProxy;
+    }
+
+    public boolean isSslEnabled() {
+        return sslEnabled;
+    }
+
+    public void setSslEnabled(boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
+    }
+
+    public List<String> getCiphers() {
+        return ciphers;
+    }
+
+    public void setCiphers(List<String> ciphers) {
+        this.ciphers = ciphers;
+    }
+
+    public String getTrustCertificate() {
+        return trustCertificate;
+    }
+
+    public void setTrustCertificate(String trustCertificate) {
+        this.trustCertificate = trustCertificate;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getKeyPassword() {
+        return keyPassword;
+    }
+
+    public void setKeyPassword(String keyPassword) {
+        this.keyPassword = keyPassword;
+    }
+
+    public long getSessionCacheSize() {
+        return sessionCacheSize;
+    }
+
+    public void setSessionCacheSize(long sessionCacheSize) {
+        this.sessionCacheSize = sessionCacheSize;
+    }
+
+    public Integer getSessionTimeout() {
+        return sessionTimeout;
+    }
+
+    public void setSessionTimeout(Integer sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
+    }
 }

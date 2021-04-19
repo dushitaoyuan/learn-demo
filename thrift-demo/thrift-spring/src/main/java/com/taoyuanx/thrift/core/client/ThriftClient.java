@@ -18,11 +18,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ThriftClient {
 
-    String serviceName() default "";
 
-    String[] ip() default {};
-
-    int port() default 9090;
+    String[] serverList() default {};
 
     double version() default 1.0d;
+
+    int requestTimeOut() default 3;
 }

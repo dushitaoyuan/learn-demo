@@ -13,15 +13,12 @@
 
 
     <dependencies>
+
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.taoyuanx</groupId>
-            <artifactId>thrift-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+
         <dependency>
             <groupId>io.airlift.drift</groupId>
             <artifactId>drift-server</artifactId>
@@ -59,6 +56,47 @@
             <artifactId>lombok</artifactId>
             <version>1.18.6</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.airlift.drift</groupId>
+            <artifactId>drift-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift.drift</groupId>
+            <artifactId>drift-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift.drift</groupId>
+            <artifactId>drift-codec</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift.drift</groupId>
+            <artifactId>drift-protocol</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>configuration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>concurrent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>jmx</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift.drift</groupId>
+            <artifactId>drift-transport-spi</artifactId>
+        </dependency>
+
+
+
     </dependencies>
 
 

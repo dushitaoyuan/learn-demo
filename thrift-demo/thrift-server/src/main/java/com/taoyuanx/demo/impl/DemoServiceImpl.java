@@ -3,6 +3,7 @@ package com.taoyuanx.demo.impl;
 import com.taoyuanx.demo.api.DemoService;
 import com.taoyuanx.demo.api.dto.HelloRequest;
 import com.taoyuanx.demo.api.dto.HelloResponse;
+import com.taoyuanx.thrift.core.server.ThriftServiceImpl;
 import io.airlift.drift.annotations.ThriftMethod;
 import io.airlift.drift.annotations.ThriftService;
 
@@ -10,6 +11,7 @@ import io.airlift.drift.annotations.ThriftService;
  * @author dushitaoyuan
  * @date 2020/7/13
  */
+@ThriftServiceImpl
 public class DemoServiceImpl implements DemoService {
     @Override
     public String hello(String demo) {
