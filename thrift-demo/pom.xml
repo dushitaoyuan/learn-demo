@@ -25,7 +25,6 @@
 
         <module>thrift-spring</module>
         <module>thrift-spring-boot-starter</module>
-        <module>thrift-spring-boot-demo</module>
     </modules>
 
     <dependencyManagement>

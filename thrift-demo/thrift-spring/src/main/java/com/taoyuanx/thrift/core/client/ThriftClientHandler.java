@@ -22,6 +22,10 @@ public class ThriftClientHandler implements BeanPostProcessor, DisposableBean {
     @Autowired
     private ApplicationContext applicationContext;
 
+
+    private static ClientProxyFactory CLIENT_PROXY_FACTORY = new ClientProxyFactory();
+
+
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         return bean;
@@ -38,13 +42,11 @@ public class ThriftClientHandler implements BeanPostProcessor, DisposableBean {
                             + " @Class " + beanClass.getName());
                 }
                 try {
+                    field.setAccessible(true);
                     ThriftClient thriftClient = field.getAnnotation(ThriftClient.class);
                     Class<?> serviceInterface = field.getType();
-                    ThriftClientConfig thriftClientConfig = ClientHelper.toThriftClientConfig(thriftClient, serviceInterface);
-                    Object proxy = ClientHelper.createProxy(serviceInterface, Arrays.stream(thriftClientConfig.getServerList()).map(ipPort -> {
-                        return HostAndPort.fromString(ipPort);
-                    }).collect(Collectors.toList()), thriftClientConfig);
-                    field.setAccessible(true);
+                    ThriftClientConfig clientConfig = CLIENT_PROXY_FACTORY.buildThriftClientConfig(thriftClient, serviceInterface);
+                    Object proxy = CLIENT_PROXY_FACTORY.getServiceProxy(clientConfig);
                     field.set(bean, proxy);
                 } catch (Exception e) {
                     throw new MyThriftExceptioin("client config exception", e);
@@ -59,6 +61,6 @@ public class ThriftClientHandler implements BeanPostProcessor, DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-        ClientHelper.close();
+        CLIENT_PROXY_FACTORY.close();
     }
 }
