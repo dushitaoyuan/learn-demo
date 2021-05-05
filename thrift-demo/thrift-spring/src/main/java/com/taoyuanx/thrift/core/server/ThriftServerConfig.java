@@ -36,6 +36,13 @@ public class ThriftServerConfig {
 
     private double version;
 
+    private Integer weight = ThriftConstant.WEIGHT;
+
+    private String netPrefix;
+
+
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,6 +56,23 @@ public class ThriftServerConfig {
         return Objects.hashCode(port, serviceInterface, version);
     }
 
+    public String getNetPrefix() {
+        return netPrefix;
+    }
+
+    public void setNetPrefix(String netPrefix) {
+        this.netPrefix = netPrefix;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
     public double getVersion() {
         return version;
     }

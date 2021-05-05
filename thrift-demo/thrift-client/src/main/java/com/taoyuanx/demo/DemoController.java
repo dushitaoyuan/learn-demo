@@ -13,16 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 public class DemoController {
-    @ThriftClient(serverList = "localhost:9090")
+    @ThriftClient
     DemoService demoService;
 
-    @ThriftClient(serverList = "localhost:9090")
-    DemoService demoService2;
+
 
     @GetMapping("hello")
     public String hello(String demo) {
         log.debug("log demo");
-        demoService2.hello(demo);
         return demoService.hello(demo);
     }
 }

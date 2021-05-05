@@ -24,4 +24,7 @@ public @interface ThriftServiceImpl {
 
     double version() default 1.0d;
 
+    Class serviceInterface() default Object.class;
+
+
 }

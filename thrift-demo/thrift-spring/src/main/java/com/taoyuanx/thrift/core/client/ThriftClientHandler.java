@@ -1,16 +1,19 @@
 package com.taoyuanx.thrift.core.client;
 
 import com.google.common.net.HostAndPort;
+import com.taoyuanx.thrift.core.ThriftConstant;
 import com.taoyuanx.thrift.core.exception.MyThriftExceptioin;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -18,12 +21,12 @@ import java.util.stream.Collectors;
  * @date 2021/4/1821:17
  * @desc: 处理bean注解
  */
-public class ThriftClientHandler implements BeanPostProcessor, DisposableBean {
+public class ThriftClientHandler implements BeanPostProcessor, DisposableBean, InitializingBean {
     @Autowired
     private ApplicationContext applicationContext;
 
 
-    private static ClientProxyFactory CLIENT_PROXY_FACTORY = new ClientProxyFactory();
+    private static ClientProxyFactory CLIENT_PROXY_FACTORY = null;
 
 
     @Override
@@ -59,8 +62,21 @@ public class ThriftClientHandler implements BeanPostProcessor, DisposableBean {
     }
 
 
+
+
     @Override
     public void destroy() throws Exception {
         CLIENT_PROXY_FACTORY.close();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (Objects.isNull(CLIENT_PROXY_FACTORY)) {
+            synchronized (this) {
+                if (Objects.isNull(CLIENT_PROXY_FACTORY)) {
+                    CLIENT_PROXY_FACTORY = new ClientProxyFactory(applicationContext.getEnvironment().getProperty(ThriftConstant.REGISTER_URL));
+                }
+            }
+        }
     }
 }

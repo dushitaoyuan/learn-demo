@@ -2,12 +2,19 @@ package com.taoyuanx.thrift.core.server;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.taoyuanx.thrift.core.ThriftConstant;
+import com.taoyuanx.thrift.core.registry.IServiceDiscovery;
+import com.taoyuanx.thrift.core.registry.ServiceInfo;
+import com.taoyuanx.thrift.core.util.IpUtil;
+import com.taoyuanx.thrift.core.util.ServiceUtil;
 import io.airlift.drift.codec.ThriftCodecManager;
 import io.airlift.drift.server.DriftServer;
 import io.airlift.drift.server.DriftService;
 import io.airlift.drift.server.stats.NullMethodInvocationStatsFactory;
 import io.airlift.drift.transport.netty.server.DriftNettyServerConfig;
 import io.airlift.drift.transport.netty.server.DriftNettyServerTransportFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -16,8 +23,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.CollectionUtils;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -25,38 +32,92 @@ import java.util.stream.Collectors;
  * @date 2021/4/1821:17
  * @desc: 处理bean注解
  */
+@Slf4j
 public class ThriftServerConfigHandler implements ApplicationContextAware, InitializingBean, DisposableBean {
     private ApplicationContext applicationContext;
 
     private List<DriftServer> driftServerList;
+    private IServiceDiscovery serviceDiscovery;
+    private Map<String, ServiceInfo> serviceInfoMap = new ConcurrentHashMap<>();
 
     @Override
     public void destroy() throws Exception {
         if (!CollectionUtils.isEmpty(driftServerList)) {
             driftServerList.stream().forEach(DriftServer::shutdown);
         }
+        if (Objects.nonNull(serviceDiscovery)) {
+            serviceInfoMap.values().stream().forEach(this.serviceDiscovery::unRegister);
+            this.serviceDiscovery.close();
+        }
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(ThriftServiceImpl.class);
-        Map<Integer, List<ThriftServerConfig>> portServerMap = beansWithAnnotation.values().stream().map((serviceBean) -> {
+
+        Map<Class, Object> serviceImplMap = new HashMap<>();
+
+        Map<Integer, List<ThriftServerConfig>> portServerMap = beansWithAnnotation.values().stream().filter(serviceBean -> {
+            boolean isImplInterface = AopUtils.getTargetClass(serviceBean).getInterfaces().length > 0;
+            ThriftServiceImpl annotation = AnnotationUtils.findAnnotation(serviceBean.getClass(), ThriftServiceImpl.class);
+            if (!isImplInterface) {
+                log.warn("@ThriftServiceImpl must impl a interface");
+                return false;
+            }
+            Class interfaceClass = annotation.serviceInterface();
+            if (interfaceClass.equals(Object.class)) {
+                interfaceClass = AopUtils.getTargetClass(serviceBean).getInterfaces()[0];
+            }
+            if (serviceImplMap.containsKey(interfaceClass)) {
+                log.warn("{} has multiple implementations", interfaceClass);
+                return false;
+            }
+            serviceImplMap.put(interfaceClass, serviceBean);
+            return true;
+        }).map(serviceBean -> {
             ThriftServiceImpl annotation = AnnotationUtils.findAnnotation(serviceBean.getClass(), ThriftServiceImpl.class);
             ThriftServerConfig thriftServerConfig = new ThriftServerConfig();
             thriftServerConfig.setPort(annotation.port());
             thriftServerConfig.setServiceImpl(serviceBean);
+            Class interfaceClass = annotation.serviceInterface();
+            if (interfaceClass.equals(Object.class)) {
+                interfaceClass = AopUtils.getTargetClass(serviceBean).getInterfaces()[0];
+            }
+            thriftServerConfig.setServiceInterface(interfaceClass.getName());
+            thriftServerConfig.setServiceInterfaceClass(interfaceClass);
             thriftServerConfig.setRequestTimeout(annotation.requestTimeOut());
+            ServiceInfo serviceInfo = new ServiceInfo();
+            serviceInfo.setWeight(thriftServerConfig.getWeight());
+            serviceInfo.setServiceName(thriftServerConfig.getServiceInterface());
+            serviceInfo.setPort(thriftServerConfig.getPort());
+            serviceInfo.setIp(IpUtil.getNetAddress(thriftServerConfig.getNetPrefix()));
+            serviceInfo.setPort(thriftServerConfig.getPort());
+            serviceInfoMap.put(serviceInfo.getServiceName(), serviceInfo);
             return thriftServerConfig;
         }).collect(Collectors.groupingBy(ThriftServerConfig::getPort));
+
         driftServerList = portServerMap.entrySet().stream().map(kv -> {
             return mapToDriftServer(kv.getValue(), kv.getKey());
         }).collect(Collectors.toList());
         driftServerList.stream().forEach(DriftServer::start);
+        //服务注册
+        serviceInfoMap.values().stream().forEach(serviceInfo -> {
+            serviceInfo.setTimestamp(System.currentTimeMillis());
+            this.serviceDiscovery.registerService(serviceInfo);
+        });
+
+
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        this.serviceDiscovery = ServiceUtil.loadSingleService(IServiceDiscovery.class);
+        if (Objects.nonNull(serviceDiscovery)) {
+            this.serviceDiscovery.init(applicationContext.getEnvironment().getProperty(ThriftConstant.REGISTER_URL));
+        }
+
+
     }
 
     private DriftServer mapToDriftServer(List<ThriftServerConfig> ThriftServerConfigList, int port) {
@@ -83,4 +144,5 @@ public class ThriftServerConfigHandler implements ApplicationContextAware, Initi
                 ImmutableSet.copyOf(driftServiceList),
                 ImmutableSet.of());
     }
+
 }
