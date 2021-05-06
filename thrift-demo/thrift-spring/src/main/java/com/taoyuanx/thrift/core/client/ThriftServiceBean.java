@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 public class ThriftServiceBean implements FactoryBean<Object>, ApplicationContextAware, InitializingBean, DisposableBean {
     private ThriftClientConfig thriftClientConfig;
-    private static ClientProxyFactory clientProxyFactory;
+    private static ClientProxyFactory clientProxyFactory = ClientProxyFactory.getInstance();
     private ApplicationContext applicationContext;
 
     @Override
@@ -36,13 +36,7 @@ public class ThriftServiceBean implements FactoryBean<Object>, ApplicationContex
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (Objects.isNull(clientProxyFactory)) {
-            synchronized (this) {
-                if (Objects.isNull(clientProxyFactory)) {
-                    clientProxyFactory = new ClientProxyFactory(applicationContext.getEnvironment().getProperty(ThriftConstant.REGISTER_URL));
-                }
-            }
-        }
+        clientProxyFactory.init(applicationContext.getEnvironment().getProperty(ThriftConstant.SERVICE_DISCOVERY_URL));
     }
 
     @Override

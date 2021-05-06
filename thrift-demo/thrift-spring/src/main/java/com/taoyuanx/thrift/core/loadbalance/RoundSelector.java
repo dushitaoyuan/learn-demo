@@ -16,7 +16,7 @@ public class RoundSelector extends AbstractSelector {
         if (serverList.isEmpty()) {
             return null;
         }
-        ThriftServer selectServer = serverList.size() == 1 ? serverList.get(round(serverList.size())) : serverList.get(0);
+        ThriftServer selectServer = serverList.size() == 1 ? serverList.get(0) : serverList.get(round(serverList.size()));
         return selectServer;
     }
 

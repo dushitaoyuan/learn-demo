@@ -7,6 +7,7 @@ import com.taoyuanx.thrift.core.loadbalance.AbstractSelector;
 import com.taoyuanx.thrift.core.loadbalance.RoundSelector;
 import com.taoyuanx.thrift.core.loadbalance.ThriftServer;
 import com.taoyuanx.thrift.core.registry.IServiceDiscovery;
+import com.taoyuanx.thrift.core.registry.ServiceInfo;
 import com.taoyuanx.thrift.core.util.ServiceUtil;
 import io.airlift.drift.client.DriftClient;
 import io.airlift.drift.client.DriftClientFactory;
@@ -17,10 +18,8 @@ import io.airlift.units.Duration;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -33,11 +32,21 @@ public class ClientProxyFactory {
     private static Map<Class, ProxyObjectPair> PROXY_MAP = new ConcurrentHashMap<>();
 
     private ThriftCodecManager codecManager = new ThriftCodecManager();
-    private IServiceDiscovery serviceDiscovery;
+    private static IServiceDiscovery serviceDiscovery = ServiceUtil.loadSingleService(IServiceDiscovery.class);
 
-    public ClientProxyFactory(String registerUrl) {
-        this.serviceDiscovery = ServiceUtil.loadSingleService(IServiceDiscovery.class);
-        this.serviceDiscovery.init(registerUrl);
+
+    private static ClientProxyFactory INSTANCE = new ClientProxyFactory();
+
+    private ClientProxyFactory() {
+
+    }
+
+    public static ClientProxyFactory getInstance() {
+        return INSTANCE;
+    }
+
+    public void init(String discoveryUrl) {
+        serviceDiscovery.init(discoveryUrl);
     }
 
 
@@ -56,12 +65,10 @@ public class ClientProxyFactory {
                 }).collect(Collectors.toList());
                 addressSelector.setServerList(staticServerList);
             } else {
-                List<ThriftServer> discoveryServiceList = serviceDiscovery.discoveryService(thriftClientConfig.getServiceInterfaceName()).stream().map(serviceInfo -> {
-                    ThriftServer thriftServer = new ThriftServer();
-                    thriftServer.setWeight(ThriftConstant.WEIGHT);
-                    thriftServer.setHostAndPort(HostAndPort.fromParts(serviceInfo.getIp(), serviceInfo.getPort()));
-                    return thriftServer;
-                }).collect(Collectors.toList());
+                List<ThriftServer> discoveryServiceList = serviceDiscovery.discoveryService(thriftClientConfig.getServiceInterfaceName(),
+                        (newServiceInfoList) -> {
+                            addressSelector.setServerList(newServiceInfoList.stream().map(this::mapToThriftServer).collect(Collectors.toList()));
+                        }).stream().map(this::mapToThriftServer).collect(Collectors.toList());
                 addressSelector.setServerList(discoveryServiceList);
             }
             DriftNettyMethodInvokerFactory<?> methodInvokerFactory = DriftNettyMethodInvokerFactory
@@ -179,5 +186,12 @@ public class ClientProxyFactory {
             PROXY_MAP.remove(interfaceClass);
         }
 
+    }
+
+    private ThriftServer mapToThriftServer(ServiceInfo serviceInfo) {
+        ThriftServer thriftServer = new ThriftServer();
+        thriftServer.setWeight(ThriftConstant.WEIGHT);
+        thriftServer.setHostAndPort(HostAndPort.fromParts(serviceInfo.getIp(), serviceInfo.getPort()));
+        return thriftServer;
     }
 }

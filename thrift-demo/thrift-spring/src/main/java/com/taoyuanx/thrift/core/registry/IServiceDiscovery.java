@@ -1,6 +1,7 @@
 package com.taoyuanx.thrift.core.registry;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author dushitaoyuan
@@ -10,31 +11,15 @@ import java.util.List;
 public interface IServiceDiscovery {
 
     /**
-     * 服务注册
-     *
-     * @param serviceInfo 服务信息
-     * @return
-     */
-    boolean registerService(ServiceInfo serviceInfo);
-
-    /**
      * 服务发现
      *
      * @param serviceName 服务名
      * @return
      */
-    List<ServiceInfo> discoveryService(String serviceName);
+    List<ServiceInfo> discoveryService(String serviceName, Consumer<List<ServiceInfo>> serviceInfoChangedListConsumer);
 
 
-    boolean unRegister(ServiceInfo serviceInfo);
-
-
-
+    void init(String discoverUrl);
 
     void close();
-
-
-    void init(String url);
-
-
 }

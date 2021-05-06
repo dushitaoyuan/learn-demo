@@ -9,5 +9,16 @@ public class ThriftConstant {
 
     public static final Integer WEIGHT = 10;
 
-    public static final String REGISTER_URL = "thrift.register_url";
+    /**
+     * 服务注册地址
+     */
+    public static final String SERVICE_REGISTER_URL = "thrift.service.register.url";
+
+    /**
+     * 服务发现地址
+     */
+    public static final String SERVICE_DISCOVERY_URL = "thrift.service.discovery.url";
+
+
+
 }

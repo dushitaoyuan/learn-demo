@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.taoyuanx.thrift.core.ThriftConstant;
 import com.taoyuanx.thrift.core.registry.IServiceDiscovery;
+import com.taoyuanx.thrift.core.registry.IServiceRegister;
 import com.taoyuanx.thrift.core.registry.ServiceInfo;
 import com.taoyuanx.thrift.core.util.IpUtil;
 import com.taoyuanx.thrift.core.util.ServiceUtil;
@@ -37,17 +38,17 @@ public class ThriftServerConfigHandler implements ApplicationContextAware, Initi
     private ApplicationContext applicationContext;
 
     private List<DriftServer> driftServerList;
-    private IServiceDiscovery serviceDiscovery;
     private Map<String, ServiceInfo> serviceInfoMap = new ConcurrentHashMap<>();
+    private static IServiceRegister serviceRegister = ServiceUtil.loadSingleService(IServiceRegister.class);
 
     @Override
     public void destroy() throws Exception {
         if (!CollectionUtils.isEmpty(driftServerList)) {
             driftServerList.stream().forEach(DriftServer::shutdown);
         }
-        if (Objects.nonNull(serviceDiscovery)) {
-            serviceInfoMap.values().stream().forEach(this.serviceDiscovery::unRegister);
-            this.serviceDiscovery.close();
+        if (Objects.nonNull(serviceRegister)) {
+            serviceInfoMap.values().stream().forEach(serviceRegister::unRegister);
+            serviceRegister.close();
         }
     }
 
@@ -92,6 +93,7 @@ public class ThriftServerConfigHandler implements ApplicationContextAware, Initi
             serviceInfo.setPort(thriftServerConfig.getPort());
             serviceInfo.setIp(IpUtil.getNetAddress(thriftServerConfig.getNetPrefix()));
             serviceInfo.setPort(thriftServerConfig.getPort());
+            serviceInfo.setTimestamp(System.currentTimeMillis());
             serviceInfoMap.put(serviceInfo.getServiceName(), serviceInfo);
             return thriftServerConfig;
         }).collect(Collectors.groupingBy(ThriftServerConfig::getPort));
@@ -101,10 +103,7 @@ public class ThriftServerConfigHandler implements ApplicationContextAware, Initi
         }).collect(Collectors.toList());
         driftServerList.stream().forEach(DriftServer::start);
         //服务注册
-        serviceInfoMap.values().stream().forEach(serviceInfo -> {
-            serviceInfo.setTimestamp(System.currentTimeMillis());
-            this.serviceDiscovery.registerService(serviceInfo);
-        });
+        serviceRegister.registerService(serviceInfoMap.values().stream().collect(Collectors.toList()));
 
 
     }
@@ -112,9 +111,9 @@ public class ThriftServerConfigHandler implements ApplicationContextAware, Initi
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        this.serviceDiscovery = ServiceUtil.loadSingleService(IServiceDiscovery.class);
-        if (Objects.nonNull(serviceDiscovery)) {
-            this.serviceDiscovery.init(applicationContext.getEnvironment().getProperty(ThriftConstant.REGISTER_URL));
+        serviceRegister = ServiceUtil.loadSingleService(IServiceRegister.class);
+        if (Objects.nonNull(serviceRegister)) {
+            serviceRegister.init(applicationContext.getEnvironment().getProperty(ThriftConstant.SERVICE_REGISTER_URL));
         }
 
 

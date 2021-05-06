@@ -1,12 +1,8 @@
 package com.taoyuanx.thrift.core.loadbalance;
 
-import com.google.common.collect.Lists;
-import com.google.common.net.HostAndPort;
-
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**

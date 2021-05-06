@@ -1,6 +1,5 @@
 package com.taoyuanx.thrift.core.client;
 
-import com.google.common.net.HostAndPort;
 import com.taoyuanx.thrift.core.ThriftConstant;
 import com.taoyuanx.thrift.core.exception.MyThriftExceptioin;
 import org.springframework.beans.BeansException;
@@ -12,9 +11,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
  * @author dushitaoyuan
@@ -26,7 +23,7 @@ public class ThriftClientHandler implements BeanPostProcessor, DisposableBean, I
     private ApplicationContext applicationContext;
 
 
-    private static ClientProxyFactory CLIENT_PROXY_FACTORY = null;
+    private static ClientProxyFactory CLIENT_PROXY_FACTORY = ClientProxyFactory.getInstance();
 
 
     @Override
@@ -62,21 +59,14 @@ public class ThriftClientHandler implements BeanPostProcessor, DisposableBean, I
     }
 
 
-
-
     @Override
     public void destroy() throws Exception {
-        CLIENT_PROXY_FACTORY.close();
+        Optional.ofNullable(CLIENT_PROXY_FACTORY).ifPresent(ClientProxyFactory::close);
     }
+
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (Objects.isNull(CLIENT_PROXY_FACTORY)) {
-            synchronized (this) {
-                if (Objects.isNull(CLIENT_PROXY_FACTORY)) {
-                    CLIENT_PROXY_FACTORY = new ClientProxyFactory(applicationContext.getEnvironment().getProperty(ThriftConstant.REGISTER_URL));
-                }
-            }
-        }
+        CLIENT_PROXY_FACTORY.init(applicationContext.getEnvironment().getProperty(ThriftConstant.SERVICE_DISCOVERY_URL));
     }
 }

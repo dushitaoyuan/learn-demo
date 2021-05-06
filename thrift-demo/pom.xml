@@ -22,9 +22,9 @@
         <module>thrift-api</module>
         <module>thrift-server</module>
         <module>thrift-client</module>
-
         <module>thrift-spring</module>
         <module>thrift-spring-boot-starter</module>
+
     </modules>
 
     <dependencyManagement>
