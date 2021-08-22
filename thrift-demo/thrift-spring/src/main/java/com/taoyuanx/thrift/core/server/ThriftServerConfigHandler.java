@@ -11,6 +11,7 @@ import com.taoyuanx.thrift.core.util.ServiceUtil;
 import io.airlift.drift.codec.ThriftCodecManager;
 import io.airlift.drift.server.DriftServer;
 import io.airlift.drift.server.DriftService;
+import io.airlift.drift.server.ServerContextFiler;
 import io.airlift.drift.server.stats.NullMethodInvocationStatsFactory;
 import io.airlift.drift.transport.netty.server.DriftNettyServerConfig;
 import io.airlift.drift.transport.netty.server.DriftNettyServerTransportFactory;
@@ -94,6 +95,7 @@ public class ThriftServerConfigHandler implements ApplicationContextAware, Initi
             serviceInfo.setIp(IpUtil.getNetAddress(thriftServerConfig.getNetPrefix()));
             serviceInfo.setPort(thriftServerConfig.getPort());
             serviceInfo.setTimestamp(System.currentTimeMillis());
+            serviceInfo.setWarmupTime(annotation.warmupTime());
             serviceInfoMap.put(serviceInfo.getServiceName(), serviceInfo);
             return thriftServerConfig;
         }).collect(Collectors.groupingBy(ThriftServerConfig::getPort));
@@ -141,7 +143,7 @@ public class ThriftServerConfigHandler implements ApplicationContextAware, Initi
                 new ThriftCodecManager(),
                 new NullMethodInvocationStatsFactory(),
                 ImmutableSet.copyOf(driftServiceList),
-                ImmutableSet.of());
+                ImmutableSet.of(new ServerContextFiler()));
     }
 
 }

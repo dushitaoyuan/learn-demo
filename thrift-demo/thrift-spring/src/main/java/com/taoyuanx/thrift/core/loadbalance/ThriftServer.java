@@ -11,9 +11,23 @@ import lombok.Data;
 @Data
 public class ThriftServer implements Address {
 
+    /**
+     * ip+port
+     */
     private HostAndPort hostAndPort;
-
+    /**
+     * 权重
+     */
     private Integer weight;
+    /**
+     * 服务上线时间
+     */
+    private long upTimestamp;
+
+    /**
+     * 服务预热时间
+     */
+    private int warmupTime;
 
 
 }

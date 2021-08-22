@@ -1,5 +1,6 @@
 package com.taoyuanx.thrift.core.client;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.net.HostAndPort;
 import com.taoyuanx.thrift.core.ThriftConstant;
 import com.taoyuanx.thrift.core.exception.MyThriftExceptioin;
@@ -12,6 +13,7 @@ import com.taoyuanx.thrift.core.util.ServiceUtil;
 import io.airlift.drift.client.DriftClient;
 import io.airlift.drift.client.DriftClientFactory;
 import io.airlift.drift.codec.ThriftCodecManager;
+import io.airlift.drift.transport.client.DriftClientConfig;
 import io.airlift.drift.transport.netty.client.DriftNettyClientConfig;
 import io.airlift.drift.transport.netty.client.DriftNettyMethodInvokerFactory;
 import io.airlift.units.Duration;
@@ -74,7 +76,7 @@ public class ClientProxyFactory {
             DriftNettyMethodInvokerFactory<?> methodInvokerFactory = DriftNettyMethodInvokerFactory
                     .createStaticDriftNettyMethodInvokerFactory(toDriftNettyClientConfig(thriftClientConfig));
             DriftClient<T> driftClient = new DriftClientFactory(codecManager, methodInvokerFactory, addressSelector)
-                    .createDriftClient(serviceInterfaceClass);
+                    .createDriftClient(serviceInterfaceClass, Optional.empty(), ImmutableList.of(new ClientContextFilter()), new DriftClientConfig());
             ProxyObjectPair proxyObjectPair = new ProxyObjectPair();
             proxyObjectPair.proxy = driftClient.get();
             proxyObjectPair.selector = addressSelector;
@@ -92,6 +94,7 @@ public class ClientProxyFactory {
             clientConfig.setServiceInterfaceName(serviceInterfaceClass.getName());
             clientConfig.setServiceInterfaceClass(serviceInterfaceClass);
             clientConfig.setServerList(thriftClient.serverList());
+            clientConfig.setConnectTimeout(thriftClient.requestTimeOut());
             return clientConfig;
         } catch (Exception e) {
             throw new MyThriftExceptioin("配置异常", e);

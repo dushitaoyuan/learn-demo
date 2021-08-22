@@ -1,5 +1,6 @@
 package com.taoyuanx.thrift.core.registry;
 
+import com.taoyuanx.thrift.core.ThriftConstant;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,6 +19,8 @@ public class ServiceInfo implements Serializable {
     private Integer port;
     private Integer weight;
     private Long timestamp;
+
+    private Integer warmupTime;
     private Map<String, String> mataInfo;
 
 

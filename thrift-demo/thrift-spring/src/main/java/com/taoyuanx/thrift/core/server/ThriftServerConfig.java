@@ -40,7 +40,7 @@ public class ThriftServerConfig {
 
     private String netPrefix;
 
-
+    private int warmupTime;
 
 
     @Override
@@ -69,10 +69,10 @@ public class ThriftServerConfig {
     }
 
 
-
     public void setWeight(Integer weight) {
         this.weight = weight;
     }
+
     public double getVersion() {
         return version;
     }
@@ -242,5 +242,13 @@ public class ThriftServerConfig {
 
     public void setServiceImpl(Object serviceImpl) {
         this.serviceImpl = serviceImpl;
+    }
+
+    public int getWarmupTime() {
+        return warmupTime;
+    }
+
+    public void setWarmupTime(int warmupTime) {
+        this.warmupTime = warmupTime;
     }
 }
