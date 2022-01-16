@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ncs.single.boot.dao.OpenAccountDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ncs.single.boot.entity.OpenAccountEntity">
+        <result column="id" property="id" />
+        <result column="open_id" property="openId" />
+        <result column="open_secret" property="openSecret" />
+        <result column="status" property="status" />
+        <result column="desc" property="desc" />
+        <result column="white_ip" property="whiteIp" />
+        <result column="end_time" property="endTime" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, open_id, open_secret, status, desc, white_ip, end_time, create_time
+    </sql>
+
+</mapper>

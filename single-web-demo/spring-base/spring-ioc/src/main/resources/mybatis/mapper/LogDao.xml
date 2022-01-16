@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ncs.sprinbase.core.dao.LogDao">
+  <resultMap id="BaseResultMap" type="com.ncs.sprinbase.core.entity.LogEntity">
+
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="code" jdbcType="INTEGER" property="code"/>
+    <result column="msg" jdbcType="VARCHAR" property="msg"/>
+    <result column="msg_context" jdbcType="VARCHAR" property="msgContext"/>
+        <result column="createtime" jdbcType="VARCHAR" property="createtime"/>
+
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+   id, code, msg, msg_context,createtime
+  </sql>
+  <insert id="saveLog" parameterType="LogEntity">
+ insert into log(id, code, msg, msg_context,createtime) values(
+ #{id},
+  #{code},
+   #{msg},
+#{msgContext,jdbcType=VARCHAR},
+#{createtime}
+ )
+ </insert>
+
+
+
+</mapper>

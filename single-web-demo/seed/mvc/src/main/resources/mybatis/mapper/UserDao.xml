@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ncs.single.mvc.dao.UserDao">
+  <resultMap id="BaseResultMap" type="com.ncs.single.mvc.entity.UserEntity">
+
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+    <result column="age" jdbcType="VARCHAR" property="age"/>
+    <result column="address" jdbcType="VARCHAR" property="address"/>
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    id, name, age, address
+  </sql>
+
+  <select id="findById" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> from user where id=#{id}
+  </select>
+
+</mapper>

@@ -1,0 +1,62 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+<id>package</id>
+<formats>
+    <format>tar.gz</format>
+</formats>
+<includeBaseDirectory>true</includeBaseDirectory>
+<fileSets>
+
+   <!-- claspath 配置 复制到config-->
+    <fileSet>
+        <directory>${build.outputDirectory}</directory>
+        <includes>
+            <include>*.properties</include>
+            <include>*.yml</include>
+        </includes>
+        <outputDirectory>loader/config</outputDirectory>
+    </fileSet>
+    <!-- 激活配置到 config-->
+     <fileSet>
+        <directory>${basedir}/profiles/${profiles.active}</directory>
+        <outputDirectory>loader/config</outputDirectory>
+    </fileSet>
+
+     <fileSet>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+            <include>mybatis/**</include>
+            <include>public/**</include>
+            <include>static/**</include>
+            <include>templates/**</include>
+            <include>logback-spring.xml</include>
+        </includes>
+        <outputDirectory>loader</outputDirectory>
+    </fileSet>
+    <!-- 程序脚本 复制到/ 并具有可执行权限 -->
+    <fileSet>
+        <directory>${basedir}/bin</directory>
+        <includes>
+            <include>*.sh</include>
+        </includes>
+        <fileMode>0755</fileMode>
+        <outputDirectory>/</outputDirectory>
+    </fileSet>
+
+    <!-- 依赖包 -->
+    <fileSet>
+        <directory>${build.directory}/lib</directory>
+        <outputDirectory>loader/lib</outputDirectory>
+        <fileMode>0666</fileMode>
+    </fileSet>
+    <!-- 主程序 -->
+    <fileSet>
+        <directory>${build.directory}</directory>
+        <outputDirectory>/</outputDirectory>
+        <includes>
+            <include>*.jar</include>
+        </includes>
+        <fileMode>0666</fileMode>
+    </fileSet>
+</fileSets>
+</assembly>
